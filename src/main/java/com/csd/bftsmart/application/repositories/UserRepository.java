@@ -1,7 +1,5 @@
 package com.csd.bftsmart.application.repositories;
 
-import com.csd.bftsmart.domain.entities.User;
-import org.springframework.data.repository.CrudRepository;
-
-public interface UserRepository extends CrudRepository<User, String> {
+public interface UserRepository {
+    com.csd.bftsmart.infrastructure.entities.User save(com.csd.bftsmart.infrastructure.entities.User user);
 }
