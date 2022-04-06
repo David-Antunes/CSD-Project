@@ -24,3 +24,12 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+apply plugin: 'idea'
+
+idea {
+	module {
+		downloadJavadoc = true
+		downloadSources = true
+	}
+}
