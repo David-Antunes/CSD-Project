@@ -1,6 +1,5 @@
 package com.csd.bftsmart.infrastructure.repositories;
 
-import com.csd.bftsmart.application.repositories.AccountRepository;
 import com.csd.bftsmart.infrastructure.entities.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface AccountJpaRepository extends JpaRepository<Account, String>, AccountRepository {
+public interface AccountJpaRepository extends JpaRepository<Account, String> {
 
     @Transactional
     @Modifying
