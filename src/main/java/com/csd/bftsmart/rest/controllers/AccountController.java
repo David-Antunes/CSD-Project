@@ -1,7 +1,9 @@
 package com.csd.bftsmart.rest.controllers;
 
-import com.csd.bftsmart.application.services.AccountService;
-import com.csd.bftsmart.rest.models.AccountRequestModel;
+import an.awesome.pipelinr.Pipeline;
+import com.csd.bftsmart.application.commands.accounts.CreateAccountCommand;
+import com.csd.bftsmart.application.commands.accounts.LoadMoneyCommand;
+import com.csd.bftsmart.rest.requests.AccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,20 +11,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/accounts")
 public class AccountController {
 
-    private final AccountService accountService;
+    private final Pipeline pipeline;
 
     @Autowired
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
+    public AccountController(Pipeline pipeline) {
+        this.pipeline = pipeline;
     }
 
     @PostMapping
-    public void createAccount(@RequestBody AccountRequestModel accountRequest) {
-        accountService.createAccount(accountRequest.getUserId(), accountRequest.getAccountId());
+    public void createAccount(@RequestBody AccountRequest accountRequest) {
+        new CreateAccountCommand(accountRequest.userId(), accountRequest.accountId()).execute(pipeline);
     }
 
     @PostMapping("/loadMoney/{accountId}")
     public void loadMoney(@PathVariable String accountId, @RequestParam int value) {
-        accountService.loadMoney(accountId, value);
+        new LoadMoneyCommand(accountId, value).execute(pipeline);
     }
 }

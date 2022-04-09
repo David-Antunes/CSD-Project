@@ -1,7 +1,8 @@
 package com.csd.bftsmart.rest.controllers;
 
-import com.csd.bftsmart.application.services.UserService;
-import com.csd.bftsmart.rest.models.UserRequestModel;
+import an.awesome.pipelinr.Pipeline;
+import com.csd.bftsmart.application.commands.users.CreateUserCommand;
+import com.csd.bftsmart.rest.requests.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,16 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
+    private final Pipeline pipeline;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(Pipeline pipeline) {
+        this.pipeline = pipeline;
     }
 
     @PostMapping
-    public void createUser(@RequestBody UserRequestModel userRequest) {
-        userService.createUser(userRequest.getUserId());
+    public void createUser(@RequestBody UserRequest userRequest) {
+        new CreateUserCommand(userRequest.userId()).execute(pipeline);
     }
 
 }
