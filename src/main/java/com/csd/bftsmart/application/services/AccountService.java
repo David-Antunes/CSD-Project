@@ -1,6 +1,6 @@
 package com.csd.bftsmart.application.services;
 
-import com.csd.bftsmart.application.SOs.AccountSO;
+import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,27 +16,27 @@ public class AccountService {
     }
 
     public void createAccount(String userId, String accountId) {
-        AccountSO accountSO = new AccountSO(accountId, 0, userId);
-        accounts.save(accountSO);
+        Account account = new Account(accountId, userId);
+        accounts.save(account);
     }
 
     public void loadMoney(String id, int value) {
         accounts.updateBalanceById(id, value);
     }
 
-    public void sendTransaction(AccountSO origin, AccountSO destination, int value) {
+    public void sendTransaction(Account origin, Account destination, int value) {
         //TODO
     }
 
-    public int extractBalance(AccountSO account) {
+    public int extractBalance(Account account) {
         return 0; //TODO
     }
 
-    public int getExtract(AccountSO account) {
+    public int getExtract(Account account) {
         return 0; //TODO
     }
 
-    public int getTotalValue(AccountSO[] accounts) {
+    public int getTotalValue(Account[] accounts) {
         return 0; //TODO
     }
 

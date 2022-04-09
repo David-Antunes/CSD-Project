@@ -1,25 +1,24 @@
 package com.csd.bftsmart.infrastructure.repositories;
 
-import com.csd.bftsmart.application.SOs.UserSO;
+import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.application.repositories.UserRepository;
+import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.Map;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    private final Map<String, UserSO> users;
+    private final InMemoryLedger ledger;
 
     @Autowired
-    public UserRepositoryImpl(Map<String, UserSO> users) {
-        this.users = users;
+    public UserRepositoryImpl(InMemoryLedger ledger) {
+        this.ledger = ledger;
     }
 
     @Override
-    public UserSO save(UserSO userSO) {
-        users.put(userSO.getId(), userSO);
-        return userSO;
+    public User save(User user) {
+        ledger.getUsers().put(user.id(), user);
+        return user;
     }
 }

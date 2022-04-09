@@ -1,7 +1,7 @@
 package com.csd.bftsmart.application.repositories;
 
-import com.csd.bftsmart.application.SOs.UserSO;
+import com.csd.bftsmart.application.entities.User;
 
 public interface UserRepository {
-    UserSO save(UserSO userSO);
+    User save(User user);
 }

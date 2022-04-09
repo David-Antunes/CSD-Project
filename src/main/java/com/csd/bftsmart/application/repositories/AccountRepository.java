@@ -1,9 +1,9 @@
 package com.csd.bftsmart.application.repositories;
 
-import com.csd.bftsmart.application.SOs.AccountSO;
+import com.csd.bftsmart.application.entities.Account;
 
 public interface AccountRepository {
-    AccountSO save(AccountSO account);
+    Account save(Account account);
 
-    int updateBalanceById(String id, int value);
+    void updateBalanceById(String id, int value);
 }
