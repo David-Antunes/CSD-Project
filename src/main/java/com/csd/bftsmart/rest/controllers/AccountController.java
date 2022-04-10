@@ -49,7 +49,7 @@ public class AccountController {
     }
 
     @GetMapping("/extract/{accountId}")
-    public List<Transaction> getExtract(@PathParam("accountId") String accountId) {
+    public List<Transaction> getExtract(@PathVariable("accountId") String accountId) {
         return new GetExtractQuery(accountId).execute(pipeline);
     }
 }

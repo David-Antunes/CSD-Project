@@ -66,7 +66,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         return transactions().stream()
                 .filter(transaction ->
                         checkTransactionForAccount(transaction.from(), accountId) || checkTransactionForAccount(transaction.to(), accountId))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private boolean checkTransactionForAccount(Account account, String accountId) {
