@@ -1,12 +1,11 @@
 package com.csd.bftsmart;
 
-import com.csd.bftsmart.infrastructure.bftsmart.BftSmartProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
-@EnableConfigurationProperties({BftSmartProperties.class})
+@ConfigurationPropertiesScan
 public class BftSmartApplication {
 
     public static void main(String[] args) {
