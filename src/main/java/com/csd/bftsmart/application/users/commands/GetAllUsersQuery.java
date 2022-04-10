@@ -4,26 +4,27 @@ import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.application.users.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public record GetAllUsersCommand() implements Command<List<User>> {
+public record GetAllUsersQuery() implements Command<List<User>> {
 
     @Component
-    @Qualifier(CommandTypes.APP_WRITE)
-    public static class Handler implements Command.Handler<GetAllUsersCommand, List<User>> {
+    @Qualifier(CommandTypes.APP_READ)
+    public static class Handler implements Command.Handler<GetAllUsersQuery, List<User>> {
 
         private final UserRepository users;
 
-
+        @Autowired
         public Handler(UserRepository users) {
             this.users = users;
         }
 
         @Override
-        public List<User> handle(GetAllUsersCommand command) {
+        public List<User> handle(GetAllUsersQuery command) {
             return users.getAll();
         }
     }

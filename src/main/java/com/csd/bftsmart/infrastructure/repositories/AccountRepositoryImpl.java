@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 @Repository
@@ -45,5 +46,17 @@ public class AccountRepositoryImpl implements AccountRepository {
         Account account = accounts().get(id);
         int previousTransactionId = transactions().get(transactions().size() - 1).id();
         transactions().add(new Transaction(previousTransactionId + 1, null, account, value));
+    }
+    @Override
+    public void sendTransaction(String from, String to, int value) {
+        Account origin = accounts().get(from);
+        Account destination = accounts().get(to);
+        int previousTransactionId = transactions().get(transactions().size() - 1).id();
+        transactions().add(new Transaction(previousTransactionId + 1, origin, destination, value));
+    }
+
+    @Override
+    public List<Transaction> getAllTransactions() {
+        return transactions();
     }
 }
