@@ -14,7 +14,7 @@ import java.util.List;
 
 public record GetAllTransactionsQuery() implements Command<List<Transaction>> {
     @Component
-    @Qualifier(CommandTypes.APP_WRITE)
+    @Qualifier(CommandTypes.APP_READ)
     public static class Handler implements Command.Handler<GetAllTransactionsQuery, List<Transaction>> {
 
         private final AccountRepository accounts;
