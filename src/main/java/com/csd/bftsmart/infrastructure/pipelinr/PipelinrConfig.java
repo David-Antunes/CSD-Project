@@ -35,33 +35,34 @@ public class PipelinrConfig {
 
     @Bean
     @Qualifier(CONTROLLER_PIPELINE)
-    @ConditionalOnProperty(prefix = "bftsmart", name = "enabled", havingValue = "false")
+    @ConditionalOnProperty(name = "bftsmart.enabled", havingValue = "false", matchIfMissing = true)
     Pipeline controllerLocalReadWritePipeline(@Qualifier("readWritePipeline") Pipeline pipeline) {
         return pipeline;
     }
 
-    @Bean
-    @Qualifier(BFT_SMART_APP_READ)
-    @ConditionalOnProperty(prefix = "bftsmart", name = "enabled")
-    Pipeline bftSmartReadPipeline(@Qualifier(BFT_SMART_APP_READ) ObjectProvider<Command.Handler> readCommandHandlers) {
-        return new Pipelinr()
-                .with(readCommandHandlers::stream);
+    @ConditionalOnProperty(name = "bftsmart.enabled")
+    static class BftSmart {
+        @Bean
+        @Qualifier(BFT_SMART_APP_READ)
+        Pipeline bftSmartReadPipeline(@Qualifier(BFT_SMART_APP_READ) ObjectProvider<Command.Handler> readCommandHandlers) {
+            return new Pipelinr()
+                    .with(readCommandHandlers::stream);
+        }
+
+        @Bean
+        @Qualifier(BFT_SMART_APP_WRITE)
+        Pipeline bftSmartReadWritePipeline(@Qualifier(BFT_SMART_APP_READ) ObjectProvider<Command.Handler> readCommandHandlers,
+                                           @Qualifier(BFT_SMART_APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers) {
+            return new Pipelinr()
+                    .with(readCommandHandlers::stream)
+                    .with(writeCommandHandlers::stream);
+        }
+
+        @Bean
+        @Qualifier(CONTROLLER_PIPELINE)
+        Pipeline controllerBftSmartReadWritePipeline(@Qualifier("bftSmartReadWritePipeline") Pipeline pipeline) {
+            return pipeline;
+        }
     }
 
-    @Bean
-    @Qualifier(BFT_SMART_APP_WRITE)
-    @ConditionalOnProperty(prefix = "bftsmart", name = "enabled")
-    Pipeline bftSmartReadWritePipeline(@Qualifier(BFT_SMART_APP_READ) ObjectProvider<Command.Handler> readCommandHandlers,
-                                       @Qualifier(BFT_SMART_APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers) {
-        return new Pipelinr()
-                .with(readCommandHandlers::stream)
-                .with(writeCommandHandlers::stream);
-    }
-
-    @Bean
-    @Qualifier(CONTROLLER_PIPELINE)
-    @ConditionalOnProperty(prefix = "bftsmart", name = "enabled")
-    Pipeline controllerBftSmartReadWritePipeline(@Qualifier("bftSmartReadWritePipeline") Pipeline pipeline) {
-        return pipeline;
-    }
 }
