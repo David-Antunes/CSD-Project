@@ -3,7 +3,7 @@ package com.csd.bftsmart.rest.controllers;
 import an.awesome.pipelinr.Pipeline;
 import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.application.users.commands.CreateUserCommand;
-import com.csd.bftsmart.application.users.commands.GetAllUsersCommand;
+import com.csd.bftsmart.application.users.commands.GetAllUsersQuery;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class UserController {
     // DEBUGGING/TESTING ENDPOINT
     @GetMapping
     public List<User> getAllUsers() {
-        return new GetAllUsersCommand().execute(pipeline);
+        return new GetAllUsersQuery().execute(pipeline);
     }
 
 }

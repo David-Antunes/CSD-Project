@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public record GetAllUsersCommand() implements Command<List<User>> {
+public record GetAllUsersQuery() implements Command<List<User>> {
 
     @Component
     @Qualifier(CommandTypes.APP_READ)
-    public static class Handler implements Command.Handler<GetAllUsersCommand, List<User>> {
+    public static class Handler implements Command.Handler<GetAllUsersQuery, List<User>> {
 
         private final UserRepository users;
 
@@ -24,7 +24,7 @@ public record GetAllUsersCommand() implements Command<List<User>> {
         }
 
         @Override
-        public List<User> handle(GetAllUsersCommand command) {
+        public List<User> handle(GetAllUsersQuery command) {
             return users.getAll();
         }
     }
