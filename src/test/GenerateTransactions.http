@@ -62,5 +62,3 @@ Content-Type: application/json
 ###
 ## GetAllTransactions
 GET http://localhost:8080/accounts/transaction
-
-

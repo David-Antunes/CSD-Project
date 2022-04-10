@@ -13,4 +13,6 @@ public interface AccountRepository {
     void sendTransaction(String from, String to, int value);
 
     List<Transaction> getAllTransactions();
+
+    List<Transaction> getExtract(String accountId);
 }
