@@ -16,7 +16,7 @@ import java.io.*;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix = "bftsmart", name = "enabled")
+@ConditionalOnProperty(name = "bftsmart.enabled")
 public class ServiceServer extends DefaultSingleRecoverable {
 
     private final Pipeline orderedPipeline, unorderedPipeline;

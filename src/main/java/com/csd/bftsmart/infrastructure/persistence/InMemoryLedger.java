@@ -14,7 +14,7 @@ import java.util.TreeMap;
 @Slf4j
 @Getter
 @Repository
-public class InMemoryLedger {
+public class InMemoryLedger implements Serializable {
 
     private TreeMap<String, User> users;
     private TreeMap<String, Account> accounts;
