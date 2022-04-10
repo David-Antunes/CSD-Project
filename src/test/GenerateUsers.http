@@ -1,0 +1,52 @@
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "1"
+}
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "2"
+}
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "3"
+}
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "4"
+}
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "5"
+}
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "6"
+}
+
+###
+## GetAllUsers
+GET http://localhost:8080/users

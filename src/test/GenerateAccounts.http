@@ -1,0 +1,30 @@
+###
+## CreateAccount
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "accountId": "1"
+}
+
+###
+## CreateAccount
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "accountId": "2"
+}
+
+###
+## CreateAccount
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "accountId": "3"
+}
+

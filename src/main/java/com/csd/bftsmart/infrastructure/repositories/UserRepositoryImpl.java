@@ -6,6 +6,9 @@ import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
@@ -21,4 +24,9 @@ public class UserRepositoryImpl implements UserRepository {
         ledger.getUsers().put(user.id(), user);
         return user;
     }
+    @Override
+    public List<User> getAll() {
+        return new ArrayList<>(ledger.getUsers().values());
+    }
+
 }
