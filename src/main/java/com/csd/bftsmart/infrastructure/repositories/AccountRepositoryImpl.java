@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Repository
 public class AccountRepositoryImpl implements AccountRepository {
@@ -58,5 +59,17 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public List<Transaction> getAllTransactions() {
         return transactions();
+    }
+
+    @Override
+    public List<Transaction> getExtract(String accountId) {
+        return transactions().stream()
+                .filter(transaction ->
+                        checkTransactionForAccount(transaction.from(), accountId) || checkTransactionForAccount(transaction.to(), accountId))
+                .collect(Collectors.toList());
+    }
+
+    private boolean checkTransactionForAccount(Account account, String accountId) {
+        return account != null && account.id().equals(accountId);
     }
 }
