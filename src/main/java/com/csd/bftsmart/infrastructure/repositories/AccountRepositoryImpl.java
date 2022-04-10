@@ -1,9 +1,9 @@
 package com.csd.bftsmart.infrastructure.repositories;
 
+import com.csd.bftsmart.application.accounts.AccountRepository;
 import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
 import com.csd.bftsmart.application.entities.User;
-import com.csd.bftsmart.application.repositories.AccountRepository;
 import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

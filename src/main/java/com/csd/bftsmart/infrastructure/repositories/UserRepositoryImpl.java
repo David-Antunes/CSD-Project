@@ -1,7 +1,7 @@
 package com.csd.bftsmart.infrastructure.repositories;
 
 import com.csd.bftsmart.application.entities.User;
-import com.csd.bftsmart.application.repositories.UserRepository;
+import com.csd.bftsmart.application.users.UserRepository;
 import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

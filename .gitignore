@@ -3,3 +3,5 @@
 gradlew.bat
 
 build/
+
+env/

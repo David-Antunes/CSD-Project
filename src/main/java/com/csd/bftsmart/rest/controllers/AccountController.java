@@ -1,10 +1,12 @@
 package com.csd.bftsmart.rest.controllers;
 
 import an.awesome.pipelinr.Pipeline;
-import com.csd.bftsmart.application.commands.accounts.CreateAccountCommand;
-import com.csd.bftsmart.application.commands.accounts.LoadMoneyCommand;
+import com.csd.bftsmart.application.accounts.commands.CreateAccountCommand;
+import com.csd.bftsmart.application.accounts.commands.LoadMoneyCommand;
+import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.AccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,7 +16,7 @@ public class AccountController {
     private final Pipeline pipeline;
 
     @Autowired
-    public AccountController(Pipeline pipeline) {
+    public AccountController(@Qualifier(PipelinrConfig.CONTROLLER_PIPELINE) Pipeline pipeline) {
         this.pipeline = pipeline;
     }
 

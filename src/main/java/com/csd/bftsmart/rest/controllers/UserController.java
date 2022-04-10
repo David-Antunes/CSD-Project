@@ -1,9 +1,11 @@
 package com.csd.bftsmart.rest.controllers;
 
 import an.awesome.pipelinr.Pipeline;
-import com.csd.bftsmart.application.commands.users.CreateUserCommand;
+import com.csd.bftsmart.application.users.commands.CreateUserCommand;
+import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +18,7 @@ public class UserController {
     private final Pipeline pipeline;
 
     @Autowired
-    public UserController(Pipeline pipeline) {
+    public UserController(@Qualifier(PipelinrConfig.CONTROLLER_PIPELINE) Pipeline pipeline) {
         this.pipeline = pipeline;
     }
 

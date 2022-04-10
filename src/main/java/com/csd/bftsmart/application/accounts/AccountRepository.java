@@ -1,4 +1,4 @@
-package com.csd.bftsmart.application.repositories;
+package com.csd.bftsmart.application.accounts;
 
 import com.csd.bftsmart.application.entities.Account;
 
