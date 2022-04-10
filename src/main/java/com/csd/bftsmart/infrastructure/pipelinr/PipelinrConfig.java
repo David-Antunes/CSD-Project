@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.stream.Stream;
+
 @Configuration
 public class PipelinrConfig {
 
@@ -29,8 +31,7 @@ public class PipelinrConfig {
     Pipeline readWritePipeline(@Qualifier(CommandTypes.APP_READ) ObjectProvider<Command.Handler> readCommandHandlers,
                                @Qualifier(CommandTypes.APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers) {
         return new Pipelinr()
-                .with(readCommandHandlers::stream)
-                .with(writeCommandHandlers::stream);
+                .with(() -> Stream.concat(readCommandHandlers.stream(), writeCommandHandlers.stream()));
     }
 
     @Bean
@@ -54,8 +55,7 @@ public class PipelinrConfig {
         Pipeline bftSmartReadWritePipeline(@Qualifier(BFT_SMART_APP_READ) ObjectProvider<Command.Handler> readCommandHandlers,
                                            @Qualifier(BFT_SMART_APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers) {
             return new Pipelinr()
-                    .with(readCommandHandlers::stream)
-                    .with(writeCommandHandlers::stream);
+                    .with(() -> Stream.concat(readCommandHandlers.stream(), writeCommandHandlers.stream()));
         }
 
         @Bean
