@@ -46,4 +46,10 @@ public class AccountRepositoryImpl implements AccountRepository {
         int previousTransactionId = transactions().get(transactions().size() - 1).id();
         transactions().add(new Transaction(previousTransactionId + 1, null, account, value));
     }
+    public void sendTransaction(String from, String to, int value) {
+        Account origin = accounts().get(from);
+        Account destination = accounts().get(to);
+        int previousTransactionId = transactions().get(transactions().size() - 1).id();
+        transactions().add(new Transaction(previousTransactionId + 1, origin, destination, value));
+    }
 }

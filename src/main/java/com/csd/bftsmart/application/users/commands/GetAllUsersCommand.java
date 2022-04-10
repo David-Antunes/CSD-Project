@@ -4,6 +4,7 @@ import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.application.users.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +13,12 @@ import java.util.List;
 public record GetAllUsersCommand() implements Command<List<User>> {
 
     @Component
-    @Qualifier(CommandTypes.APP_WRITE)
+    @Qualifier(CommandTypes.APP_READ)
     public static class Handler implements Command.Handler<GetAllUsersCommand, List<User>> {
 
         private final UserRepository users;
 
-
+        @Autowired
         public Handler(UserRepository users) {
             this.users = users;
         }

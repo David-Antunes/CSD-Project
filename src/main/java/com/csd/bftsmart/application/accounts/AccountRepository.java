@@ -6,4 +6,6 @@ public interface AccountRepository {
     Account save(Account account);
 
     void updateBalanceById(String id, int value);
+
+    void sendTransaction(String from, String to, int value);
 }
