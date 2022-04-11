@@ -13,18 +13,13 @@ import java.security.Security;
 @ConditionalOnProperty(name = "bftsmart.enabled")
 public class ReplicaRunner implements CommandLineRunner {
 
-    private final int replicaId;
-    private final ServiceServer serviceServer;
-
     @Autowired
     public ReplicaRunner(@Value("${bftsmart.replicaId}") int replicaId, ServiceServer serviceServer) {
-        this.replicaId = replicaId;
-        this.serviceServer = serviceServer;
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        new ServiceReplica(replicaId, serviceServer, serviceServer);
     }
 
     @Override
     public void run(String... args) {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        new ServiceReplica(replicaId, serviceServer, serviceServer);
     }
 }

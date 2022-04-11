@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-public record LoadMoneyCommand(String accountId, int value) implements Command<Voidy> {
+import java.io.Serializable;
+
+public record LoadMoneyCommand(String accountId, int value) implements Command<Voidy>, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)

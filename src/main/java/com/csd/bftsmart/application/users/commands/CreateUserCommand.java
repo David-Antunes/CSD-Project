@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public record CreateUserCommand(String userId) implements Command<Voidy> {
+public record CreateUserCommand(String userId) implements Command<Voidy>, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)
