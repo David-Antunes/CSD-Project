@@ -72,4 +72,23 @@ public class AccountRepositoryImpl implements AccountRepository {
     private boolean checkTransactionForAccount(Account account, String accountId) {
         return account != null && account.id().equals(accountId);
     }
+
+    @Override
+    public int getBalance(String accountId) {
+        int balance = 0;
+        for (Transaction transaction: transactions()) {
+            balance += getTransactionValue(transaction, accountId);
+        }
+        return balance;
+    }
+
+    private int getTransactionValue(Transaction transaction, String accountId) {
+        if (transaction.to() != null && transaction.to().id().equals(accountId)) {
+            return -transaction.value();
+        } else if(transaction.from() != null && transaction.from().id().equals(accountId)) {
+            return transaction.value();
+        } else
+            return 0;
+    }
+
 }
