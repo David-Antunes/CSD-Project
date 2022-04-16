@@ -52,4 +52,9 @@ public class AccountController {
     public List<Transaction> getExtract(@PathVariable("accountId") String accountId) {
         return new GetExtractQuery(accountId).execute(pipeline);
     }
+
+    @GetMapping("/balance/{accountId}")
+    public int getBalance(@PathVariable("accountId") String accountId)  {
+        return new GetBalanceQuery(accountId).execute(pipeline);
+    }
 }
