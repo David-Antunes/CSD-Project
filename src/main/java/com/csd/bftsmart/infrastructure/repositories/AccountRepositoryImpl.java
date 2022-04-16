@@ -84,9 +84,9 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     private int getTransactionValue(Transaction transaction, String accountId) {
         if (transaction.to() != null && transaction.to().id().equals(accountId)) {
-            return -transaction.value();
-        } else if(transaction.from() != null && transaction.from().id().equals(accountId)) {
             return transaction.value();
+        } else if(transaction.from() != null && transaction.from().id().equals(accountId)) {
+            return -transaction.value();
         } else
             return 0;
     }
