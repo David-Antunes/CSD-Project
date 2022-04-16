@@ -50,3 +50,4 @@ Content-Type: application/json
 ###
 ## GetAllUsers
 GET http://localhost:8080/users
+Accept: application/json
