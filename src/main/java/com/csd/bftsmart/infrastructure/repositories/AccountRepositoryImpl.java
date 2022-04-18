@@ -8,9 +8,7 @@ import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -83,6 +81,9 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     private int getTransactionValue(Transaction transaction, String accountId) {
+        if(accountId == null || accountId.equals(""))
+            return 0;
+
         if (transaction.to() != null && transaction.to().id().equals(accountId)) {
             return transaction.value();
         } else if(transaction.from() != null && transaction.from().id().equals(accountId)) {
@@ -98,6 +99,24 @@ public class AccountRepositoryImpl implements AccountRepository {
             balance += transaction.from() == null ? transaction.value() : 0;
         }
         return balance;
+    }
+
+    @Override
+    public Map<Account, Integer> getTotalValue(List<Account> accounts) {
+        Map<Account, Integer> accountValues = new HashMap<>(accounts.size());
+
+        for(Account account: accounts)
+            accountValues.put(account, 0);
+        for(Transaction transaction: transactions()) {
+            Account to = transaction.to();
+            Account from = transaction.from();
+            if(to != null && accountValues.containsKey(to))
+                accountValues.put(to, accountValues.get(to) + getTransactionValue(transaction, to.id()));
+            if(from != null && accountValues.containsKey(from))
+                accountValues.put(from, accountValues.get(from) + getTransactionValue(transaction, from.id()));
+        }
+
+        return accountValues;
     }
 
 }

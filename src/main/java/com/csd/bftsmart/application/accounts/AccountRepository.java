@@ -4,6 +4,7 @@ import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AccountRepository {
     Account save(Account account);
@@ -19,4 +20,6 @@ public interface AccountRepository {
     int getBalance(String accountId);
 
     int getGlobalValue();
+
+    Map<Account, Integer> getTotalValue(List<Account> accounts);
 }
