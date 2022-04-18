@@ -28,3 +28,7 @@ Content-Type: application/json
   "accountId": "3"
 }
 
+###
+## getAllAccounts
+GET http://localhost:8080/accounts
+accept: application/json

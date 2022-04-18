@@ -4,6 +4,8 @@ import an.awesome.pipelinr.Pipeline;
 import com.csd.bftsmart.application.accounts.commands.*;
 import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
+import com.csd.bftsmart.application.entities.User;
+import com.csd.bftsmart.application.users.commands.GetAllUsersQuery;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.AccountRequest;
 import com.csd.bftsmart.rest.requests.TransactionRequest;
@@ -67,5 +69,10 @@ public class AccountController {
     @GetMapping("/total")
     public Map<Account, Integer> getGlobalValue(@RequestBody List<Account> accounts) {
         return new GetTotalValueQuery(accounts).execute(pipeline);
+    }
+
+    @GetMapping
+    public List<Account> getAllAccounts() {
+        return new GetAllAccountsQuery().execute(pipeline);
     }
 }

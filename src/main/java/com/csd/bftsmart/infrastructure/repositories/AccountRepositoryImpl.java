@@ -118,5 +118,9 @@ public class AccountRepositoryImpl implements AccountRepository {
 
         return accountValues;
     }
+    @Override
+    public List<Account> getAll() {
+        return new ArrayList<>(accounts().values());
+    }
 
 }

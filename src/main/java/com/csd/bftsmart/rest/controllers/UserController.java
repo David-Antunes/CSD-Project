@@ -27,7 +27,7 @@ public class UserController {
     public void createUser(@RequestBody UserRequest userRequest) {
         new CreateUserCommand(userRequest.userId()).execute(pipeline);
     }
-    // DEBUGGING/TESTING ENDPOINT
+
     @GetMapping
     public List<User> getAllUsers() {
         return new GetAllUsersQuery().execute(pipeline);
