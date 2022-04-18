@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -58,8 +57,8 @@ public class AccountController {
         return new GetBalanceQuery(accountId).execute(pipeline);
     }
 
-    @GetMapping("/total")
-    public int getTotalValue() {
-        return new GetTotalValueQuery().execute(pipeline);
+    @GetMapping("/global")
+    public int getGlobalValue() {
+        return new GetGlobalValueQuery().execute(pipeline);
     }
 }

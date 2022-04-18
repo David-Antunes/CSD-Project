@@ -92,7 +92,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public int getTotalValue() {
+    public int getGlobalValue() {
         int balance = 0;
         for (Transaction transaction: transactions()) {
             balance += transaction.from() == null ? transaction.value() : 0;

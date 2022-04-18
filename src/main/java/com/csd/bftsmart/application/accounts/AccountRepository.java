@@ -18,5 +18,5 @@ public interface AccountRepository {
 
     int getBalance(String accountId);
 
-    int getTotalValue();
+    int getGlobalValue();
 }

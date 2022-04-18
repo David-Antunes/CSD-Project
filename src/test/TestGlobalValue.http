@@ -114,5 +114,5 @@ Accept: application/json
 
 ###
 ## GetTotalValue
-GET http://localhost:8080/accounts/total
+GET http://localhost:8080/accounts/global
 Accept: application/json
