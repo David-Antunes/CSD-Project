@@ -17,4 +17,6 @@ public interface AccountRepository {
     List<Transaction> getExtract(String accountId);
 
     int getBalance(String accountId);
+
+    int getTotalValue();
 }

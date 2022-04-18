@@ -1,0 +1,118 @@
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "1"
+}
+
+###
+## CreateAccount
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "accountId": "1"
+}
+
+###
+## LoadMoney
+POST http://localhost:8080/accounts/loadMoney/1?value=100
+Content-Type: application/json
+
+###
+## LoadMoney
+POST http://localhost:8080/accounts/loadMoney/1?value=100
+Content-Type: application/json
+
+###
+## LoadMoney
+POST http://localhost:8080/accounts/loadMoney/1?value=100
+Content-Type: application/json
+
+###
+## LoadMoney
+POST http://localhost:8080/accounts/loadMoney/1?value=100
+Content-Type: application/json
+
+###
+## LoadMoney
+POST http://localhost:8080/accounts/loadMoney/1?value=100
+Content-Type: application/json
+
+###
+## LoadMoney
+POST http://localhost:8080/accounts/loadMoney/1?value=100
+Content-Type: application/json
+
+###
+## LoadMoney
+POST http://localhost:8080/accounts/loadMoney/1?value=100
+Content-Type: application/json
+
+###
+## LoadMoney
+POST http://localhost:8080/accounts/loadMoney/1?value=100
+Content-Type: application/json
+###
+## SendTransaction
+POST http://localhost:8080/accounts/transaction
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+###
+## SendTransaction
+POST http://localhost:8080/accounts/transaction
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+###
+## SendTransaction
+POST http://localhost:8080/accounts/transaction
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+###
+## SendTransaction
+POST http://localhost:8080/accounts/transaction
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+###
+## SendTransaction
+POST http://localhost:8080/accounts/transaction
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+
+###
+## GetBalance
+GET http://localhost:8080/accounts/balance/1
+Accept: application/json
+
+###
+## GetTotalValue
+GET http://localhost:8080/accounts/total
+Accept: application/json
