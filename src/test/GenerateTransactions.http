@@ -8,6 +8,7 @@ Content-Type: application/json
   "to": "1",
   "value": 100
 }
+
 ###
 ## SendTransaction
 POST http://localhost:8080/accounts/transaction

@@ -91,4 +91,13 @@ public class AccountRepositoryImpl implements AccountRepository {
             return 0;
     }
 
+    @Override
+    public int getTotalValue() {
+        int balance = 0;
+        for (Transaction transaction: transactions()) {
+            balance += transaction.from() == null ? transaction.value() : 0;
+        }
+        return balance;
+    }
+
 }

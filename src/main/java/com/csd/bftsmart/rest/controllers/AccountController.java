@@ -57,4 +57,9 @@ public class AccountController {
     public int getBalance(@PathVariable("accountId") String accountId)  {
         return new GetBalanceQuery(accountId).execute(pipeline);
     }
+
+    @GetMapping("/total")
+    public int getTotalValue() {
+        return new GetTotalValueQuery().execute(pipeline);
+    }
 }
