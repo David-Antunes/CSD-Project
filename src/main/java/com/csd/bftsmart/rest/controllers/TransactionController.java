@@ -1,9 +1,9 @@
 package com.csd.bftsmart.rest.controllers;
 
 import an.awesome.pipelinr.Pipeline;
-import com.csd.bftsmart.application.accounts.commands.*;
 import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
+import com.csd.bftsmart.application.transactions.commands.*;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;

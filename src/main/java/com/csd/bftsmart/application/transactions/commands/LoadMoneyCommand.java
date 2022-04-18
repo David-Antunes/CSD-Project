@@ -1,4 +1,4 @@
-package com.csd.bftsmart.application.accounts.commands;
+package com.csd.bftsmart.application.transactions.commands;
 
 import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Voidy;

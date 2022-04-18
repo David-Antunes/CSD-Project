@@ -1,20 +1,17 @@
-package com.csd.bftsmart.application.accounts.commands;
+package com.csd.bftsmart.application.transactions.commands;
 
 import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
-import com.csd.bftsmart.application.entities.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
+public record GetGlobalValueQuery() implements Command<Integer> {
 
-public record GetTotalValueQuery(List<Account> accounts) implements Command<Map<Account, Integer>>{
     @Component
     @Qualifier(CommandTypes.APP_READ)
-    public static class Handler implements Command.Handler<GetTotalValueQuery, Map<Account, Integer>> {
+    public static class Handler implements Command.Handler<GetGlobalValueQuery, Integer> {
 
         private final AccountRepository accounts;
         @Autowired
@@ -22,8 +19,8 @@ public record GetTotalValueQuery(List<Account> accounts) implements Command<Map<
             this.accounts = accounts;
         }
 
-        public Map<Account, Integer> handle(GetTotalValueQuery command) {
-            return accounts.getTotalValue(command.accounts);
+        public Integer handle(GetGlobalValueQuery command) {
+            return accounts.getGlobalValue();
         }
     }
 }

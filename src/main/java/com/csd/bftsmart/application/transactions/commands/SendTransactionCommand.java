@@ -1,10 +1,9 @@
-package com.csd.bftsmart.application.accounts.commands;
+package com.csd.bftsmart.application.transactions.commands;
 
 import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Voidy;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
-import com.csd.bftsmart.application.entities.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
