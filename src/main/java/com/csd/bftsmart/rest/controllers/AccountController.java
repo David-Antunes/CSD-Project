@@ -2,6 +2,7 @@ package com.csd.bftsmart.rest.controllers;
 
 import an.awesome.pipelinr.Pipeline;
 import com.csd.bftsmart.application.accounts.commands.*;
+import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.AccountRequest;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/accounts")
@@ -60,5 +62,10 @@ public class AccountController {
     @GetMapping("/global")
     public int getGlobalValue() {
         return new GetGlobalValueQuery().execute(pipeline);
+    }
+
+    @GetMapping("/total")
+    public Map<Account, Integer> getGlobalValue(@RequestBody List<Account> accounts) {
+        return new GetTotalValueQuery(accounts).execute(pipeline);
     }
 }
