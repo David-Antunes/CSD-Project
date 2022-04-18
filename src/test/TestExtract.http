@@ -20,7 +20,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -42,7 +42,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -53,7 +53,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -64,7 +64,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -75,7 +75,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -86,7 +86,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -96,5 +96,5 @@ Content-Type: application/json
 }
 ###
 ##
-GET http://localhost:8080/accounts/extract/1
+GET http://localhost:8080//transactions/extract/1
 Accept: application/json

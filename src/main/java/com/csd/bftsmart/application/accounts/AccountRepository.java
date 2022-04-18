@@ -2,7 +2,7 @@ package com.csd.bftsmart.application.accounts;
 
 import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
-import com.csd.bftsmart.application.entities.User;
+import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +25,5 @@ public interface AccountRepository {
     Map<Account, Integer> getTotalValue(List<Account> accounts);
 
     List<Account> getAll();
+
 }

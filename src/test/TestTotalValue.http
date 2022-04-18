@@ -29,28 +29,17 @@ Content-Type: application/json
 
 ###
 ## LoadMoney
-POST http://localhost:8080/accounts/loadMoney/1?value=1000
+POST http://localhost:8080/transactions/loadMoney/1?value=1000
 Content-Type: application/json
 
 ###
 ## LoadMoney
-POST http://localhost:8080/accounts/loadMoney/2?value=1000
+POST http://localhost:8080/transactions/loadMoney/2?value=1000
 Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
-Content-Type: application/json
-
-{
-  "from": "1",
-  "to": "2",
-  "value": 100
-}
-
-###
-## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -61,7 +50,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -72,7 +61,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -83,7 +72,7 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -94,7 +83,18 @@ Content-Type: application/json
 
 ###
 ## SendTransaction
-POST http://localhost:8080/accounts/transaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "2",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
@@ -116,7 +116,7 @@ Accept: application/json
 
 ###
 ## SendTransaction
-GET http://localhost:8080/accounts/total
+GET http://localhost:8080/transactions/total
 Accept: application/json
 Content-Type: application/json
 
@@ -133,12 +133,12 @@ Content-Type: application/json
 
 ###
 ## GetAllTransactions
-GET http://localhost:8080/accounts/transaction
+GET http://localhost:8080/transactions
 Accept: application/json
 
 ###
 ## SendTransaction
-GET http://localhost:8080/accounts/total
+GET http://localhost:8080/transactions/total
 Accept: application/json
 Content-Type: application/json
 
