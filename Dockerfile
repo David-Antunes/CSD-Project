@@ -1,5 +1,6 @@
 FROM gradle AS build
 WORKDIR app
+copy build/ build/
 COPY src/ src/
 COPY build.gradle .
 COPY settings.gradle .

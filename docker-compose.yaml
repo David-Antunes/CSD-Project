@@ -9,7 +9,8 @@ services:
       BFT_ID: 0
       SPRING_PROFILES_ACTIVE: bftsmart
     networks:
-      - bft
+      bft:
+        ipv4_address: 172.20.0.2
   bftsmart1:
     hostname: bftsmart1
     image: bft
@@ -19,7 +20,8 @@ services:
       BFT_ID: 1
       SPRING_PROFILES_ACTIVE: bftsmart
     networks:
-      - bft
+      bft:
+        ipv4_address: 172.20.0.3
   bftsmart2:
     hostname: bftsmart2
     image: bft
@@ -29,7 +31,8 @@ services:
       BFT_ID: 2
       SPRING_PROFILES_ACTIVE: bftsmart
     networks:
-      - bft
+      bft:
+        ipv4_address: 172.20.0.4
   bftsmart3:
     hostname: bftsmart3
     image: bft
@@ -39,8 +42,12 @@ services:
       BFT_ID: 3
       SPRING_PROFILES_ACTIVE: bftsmart
     networks:
-      - bft
+      bft:
+        ipv4_address: 172.20.0.5
+
 
 networks:
   bft:
-    external: true
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
