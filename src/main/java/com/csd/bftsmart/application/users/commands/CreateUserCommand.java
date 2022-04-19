@@ -30,11 +30,11 @@ public record CreateUserCommand(String userId) implements Command<Either<Voidy>>
         @Override
         public Either<Voidy> handle(CreateUserCommand command) {
             if(users.contains(command.userId))
-                return new Either<Voidy>(ExceptionCode.USER_EXISTS, null);
+                return Either.failure(ExceptionCode.USER_EXISTS);
 
             User user = new User(command.userId(), new ArrayList<>(2));
             users.save(user);
-            return new Either<Voidy>(ExceptionCode.SUCCESS, null);
+            return Either.success();
         }
     }
 }

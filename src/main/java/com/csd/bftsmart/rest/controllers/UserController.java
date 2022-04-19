@@ -26,7 +26,9 @@ public class UserController {
 
     @PostMapping
     public void createUser(@RequestBody UserRequest userRequest) {
-        HandleWebExceptions.resultOrException(new CreateUserCommand(userRequest.userId()).execute(pipeline));
+        HandleWebExceptions.resultOrException(
+                new CreateUserCommand(userRequest.userId()).execute(pipeline)
+        );
     }
 
     @GetMapping

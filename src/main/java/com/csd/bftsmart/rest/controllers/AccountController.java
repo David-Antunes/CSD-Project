@@ -31,12 +31,16 @@ public class AccountController {
 
     @PostMapping
     public void createAccount(@RequestBody AccountRequest accountRequest) {
-        HandleWebExceptions.resultOrException(new CreateAccountCommand(accountRequest.userId(), accountRequest.accountId()).execute(pipeline));
+        HandleWebExceptions.resultOrException(
+                new CreateAccountCommand(accountRequest.userId(), accountRequest.accountId()).execute(pipeline)
+        );
     }
 
     @GetMapping("/balance/{accountId}")
     public int getBalance(@PathVariable("accountId") String accountId)  {
-        return new GetBalanceQuery(accountId).execute(pipeline);
+        return HandleWebExceptions.resultOrException(
+                new GetBalanceQuery(accountId).execute(pipeline)
+        );
     }
 
     @GetMapping

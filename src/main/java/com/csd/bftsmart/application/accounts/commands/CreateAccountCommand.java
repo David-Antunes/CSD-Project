@@ -36,10 +36,10 @@ public record CreateAccountCommand(String userId, String accountId) implements C
                 return Either.failure(ExceptionCode.USER_DOES_NOT_EXIST);
             else if(accounts.contains(command.accountId))
                 return Either.failure(ExceptionCode.ACCOUNT_EXISTS);
-            
+
             Account account = new Account(command.accountId(), command.userId());
             accounts.save(account);
-            return new Either<>(ExceptionCode.SUCCESS, null);
+            return Either.success();
         }
     }
 }

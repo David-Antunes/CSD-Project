@@ -4,6 +4,7 @@ import an.awesome.pipelinr.Pipeline;
 import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
 import com.csd.bftsmart.application.transactions.commands.*;
+import com.csd.bftsmart.exceptions.HandleWebExceptions;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +27,19 @@ public class TransactionController {
 
     @PostMapping()
     public void sendTransaction(@RequestBody TransactionRequest transactionRequest) {
-        new SendTransactionCommand(
+        HandleWebExceptions.resultOrException(new SendTransactionCommand(
                 transactionRequest.from(),
                 transactionRequest.to(),
                 transactionRequest.value()
-        ).execute(pipeline);
+            ).execute(pipeline)
+        );
     }
 
     @PostMapping("/loadMoney/{accountId}")
     public void loadMoney(@PathVariable String accountId, @RequestParam int value) {
-        new LoadMoneyCommand(accountId, value).execute(pipeline);
+        HandleWebExceptions.resultOrException(
+                new LoadMoneyCommand(accountId, value).execute(pipeline)
+        );
     }
 
 
@@ -46,7 +50,9 @@ public class TransactionController {
 
     @GetMapping("/extract/{accountId}")
     public List<Transaction> getExtract(@PathVariable("accountId") String accountId) {
-        return new GetExtractQuery(accountId).execute(pipeline);
+        return HandleWebExceptions.resultOrException(
+                new GetExtractQuery(accountId).execute(pipeline)
+        );
     }
 
     @GetMapping("/global")
