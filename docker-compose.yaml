@@ -1,0 +1,46 @@
+version: "3"
+services:
+  bftsmart0:
+    hostname: bftsmart0
+    image: bft
+    ports:
+      - "11000:11000"
+    environment:
+      BFT_ID: 0
+      SPRING_PROFILES_ACTIVE: bftsmart
+    networks:
+      - bft
+  bftsmart1:
+    hostname: bftsmart1
+    image: bft
+    ports:
+      - "11010:11010"
+    environment:
+      BFT_ID: 1
+      SPRING_PROFILES_ACTIVE: bftsmart
+    networks:
+      - bft
+  bftsmart2:
+    hostname: bftsmart2
+    image: bft
+    ports:
+      - "11020:11020"
+    environment:
+      BFT_ID: 2
+      SPRING_PROFILES_ACTIVE: bftsmart
+    networks:
+      - bft
+  bftsmart3:
+    hostname: bftsmart3
+    image: bft
+    ports:
+      - "11030:11030"
+    environment:
+      BFT_ID: 3
+      SPRING_PROFILES_ACTIVE: bftsmart
+    networks:
+      - bft
+
+networks:
+  bft:
+    external: true
