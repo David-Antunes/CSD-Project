@@ -26,4 +26,5 @@ public interface AccountRepository {
 
     List<Account> getAll();
 
+    boolean contains(String accountId);
 }

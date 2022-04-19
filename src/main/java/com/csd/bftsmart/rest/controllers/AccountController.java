@@ -6,6 +6,7 @@ import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
 import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.application.users.commands.GetAllUsersQuery;
+import com.csd.bftsmart.exceptions.HandleWebExceptions;
 import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.AccountRequest;
@@ -30,7 +31,7 @@ public class AccountController {
 
     @PostMapping
     public void createAccount(@RequestBody AccountRequest accountRequest) {
-        new CreateAccountCommand(accountRequest.userId(), accountRequest.accountId()).execute(pipeline);
+        HandleWebExceptions.resultOrException(new CreateAccountCommand(accountRequest.userId(), accountRequest.accountId()).execute(pipeline));
     }
 
     @GetMapping("/balance/{accountId}")

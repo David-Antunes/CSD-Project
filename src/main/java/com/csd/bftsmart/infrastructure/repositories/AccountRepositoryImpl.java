@@ -34,6 +34,10 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
+    public boolean contains(String accountId) {
+        return accounts().containsKey(accountId);
+    }
+    @Override
     public Account save(Account account) {
         users().get(account.userId()).accounts().add(account);
         accounts().put(account.id(), account);
