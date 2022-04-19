@@ -24,6 +24,10 @@ public class UserRepositoryImpl implements UserRepository {
         ledger.getUsers().put(user.id(), user);
         return user;
     }
+
+    public boolean contains(String userId) {
+        return ledger.getUsers().containsKey(userId);
+    }
     @Override
     public List<User> getAll() {
         return new ArrayList<>(ledger.getUsers().values());

@@ -4,6 +4,7 @@ import an.awesome.pipelinr.Pipeline;
 import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.application.users.commands.CreateUserCommand;
 import com.csd.bftsmart.application.users.commands.GetAllUsersQuery;
+import com.csd.bftsmart.exceptions.HandleWebExceptions;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.requests.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class UserController {
 
     @PostMapping
     public void createUser(@RequestBody UserRequest userRequest) {
-        new CreateUserCommand(userRequest.userId()).execute(pipeline);
+        HandleWebExceptions.resultOrException(new CreateUserCommand(userRequest.userId()).execute(pipeline));
     }
 
     @GetMapping
