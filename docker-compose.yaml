@@ -5,6 +5,7 @@ services:
     image: bft
     ports:
       - "11000:11000"
+      - "8080:8080"
     environment:
       BFT_ID: 0
       SPRING_PROFILES_ACTIVE: bftsmart
@@ -16,6 +17,7 @@ services:
     image: bft
     ports:
       - "11010:11010"
+      - "8081:8080"
     environment:
       BFT_ID: 1
       SPRING_PROFILES_ACTIVE: bftsmart
@@ -27,6 +29,7 @@ services:
     image: bft
     ports:
       - "11020:11020"
+      - "8082:8080"
     environment:
       BFT_ID: 2
       SPRING_PROFILES_ACTIVE: bftsmart
@@ -37,7 +40,7 @@ services:
     hostname: bftsmart3
     image: bft
     ports:
-      - "11030:11030"
+      - "8083:8080"
     environment:
       BFT_ID: 3
       SPRING_PROFILES_ACTIVE: bftsmart

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.rmi.server.ExportException;
 
 public record SendTransactionCommand(String from, String to, int value) implements Command<Either<Voidy>>, Serializable {
 
@@ -30,6 +29,8 @@ public record SendTransactionCommand(String from, String to, int value) implemen
         public Either<Voidy> handle(SendTransactionCommand command) {
             if(command.value < 0)
                 return Either.failure(ExceptionCode.INVALID_VALUE);
+            else if(command.to.equals(command.from))
+                return Either.failure(ExceptionCode.SAME_ACCOUNT);
             else if(!accounts.contains(command.to) || !accounts.contains(command.from))
                 return Either.failure(ExceptionCode.ACCOUNT_DOES_NOT_EXIST);
             else if(accounts.getBalance(command.from) < command.value)

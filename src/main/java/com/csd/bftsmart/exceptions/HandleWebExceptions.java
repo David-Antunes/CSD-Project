@@ -13,6 +13,7 @@ public class HandleWebExceptions {
             case ACCOUNT_EXISTS -> throw new ResponseStatusException(BAD_REQUEST, "Account already exists.");
             case INVALID_VALUE -> throw new ResponseStatusException(BAD_REQUEST, "Invalid value.");
             case NOT_ENOUGH_BALANCE -> throw new ResponseStatusException(BAD_REQUEST, "Account does not have enough balance.");
+            case SAME_ACCOUNT -> throw new ResponseStatusException(BAD_REQUEST, "Can not send money to same account.");
             case INVALID_USER -> throw new ResponseStatusException(BAD_REQUEST, "Invalid user.");
             case INVALID_SIGNATURE -> throw new ResponseStatusException(BAD_REQUEST, "Invalid digital signature.");
             case ACCOUNT_DOES_NOT_EXIST -> throw new ResponseStatusException(BAD_REQUEST, "Account does not exist.");

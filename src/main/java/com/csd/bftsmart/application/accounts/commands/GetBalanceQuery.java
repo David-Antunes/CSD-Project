@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-public record GetBalanceQuery(String accountId) implements Command<Either<Integer>> {
+import java.io.Serializable;
+
+public record GetBalanceQuery(String accountId) implements Command<Either<Integer>>, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_READ)

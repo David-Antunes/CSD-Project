@@ -8,9 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.List;
 
-public record GetAllAccountsQuery() implements Command<List<Account>> {
+public record GetAllAccountsQuery() implements Command<List<Account>>, Serializable {
         @Component
         @Qualifier(CommandTypes.APP_READ)
         public static class Handler implements Command.Handler<GetAllAccountsQuery, List<Account>> {

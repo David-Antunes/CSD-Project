@@ -18,13 +18,27 @@ Content-Type: application/json
 }
 
 ###
+## CreateAccount
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "accountId": "2"
+}
+###
+## LoadMoney
+POST http://localhost:8080/transactions/loadMoney/1?value=10000
+Content-Type: application/json
+
+###
 ## SendTransaction
 POST http://localhost:8080/transactions
 Content-Type: application/json
 
 {
   "from": "1",
-  "to": "1",
+  "to": "2",
   "value": 100
 }
 
@@ -35,7 +49,7 @@ Content-Type: application/json
 
 {
   "from": "1",
-  "to": "1",
+  "to": "2",
   "value": 100
 }
 ###
@@ -45,7 +59,7 @@ Content-Type: application/json
 
 {
   "from": "1",
-  "to": "1",
+  "to": "2",
   "value": 100
 }
 ###
@@ -55,7 +69,7 @@ Content-Type: application/json
 
 {
   "from": "1",
-  "to": "1",
+  "to": "2",
   "value": 100
 }
 ###
@@ -65,7 +79,7 @@ Content-Type: application/json
 
 {
   "from": "1",
-  "to": "1",
+  "to": "2",
   "value": 100
 }
 ###
@@ -75,7 +89,7 @@ Content-Type: application/json
 
 {
   "from": "1",
-  "to": "1",
+  "to": "2",
   "value": 100
 }
 

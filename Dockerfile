@@ -1,6 +1,5 @@
 FROM gradle AS build
 WORKDIR app
-copy build/ build/
 COPY src/ src/
 COPY build.gradle .
 COPY settings.gradle .
@@ -12,4 +11,3 @@ WORKDIR app
 COPY --from=build /home/gradle/app/build/libs .
 COPY config config
 CMD ["java", "-jar","bft-smart-0.0.1-SNAPSHOT.jar", "com.csd.bftsmart.BftSmartApplication"]
-

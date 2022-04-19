@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-public record GetLedgerQuery() implements Command<InMemoryLedger> {
+import java.io.Serializable;
+
+public record GetLedgerQuery() implements Command<InMemoryLedger>, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_READ)

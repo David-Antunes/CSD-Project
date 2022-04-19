@@ -6,6 +6,7 @@ Content-Type: application/json
 {
   "userId": "1"
 }
+
 ###
 ## CreateUser
 POST http://localhost:8080/users
@@ -32,7 +33,7 @@ Content-Type: application/json
 }
 ###
 ## CreateUser
-POST http://localhost:11000/users
+POST http://localhost:8080/users
 Content-Type: application/json
 
 {

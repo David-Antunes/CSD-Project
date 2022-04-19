@@ -1,6 +1,8 @@
 package com.csd.bftsmart.exceptions;
 
-public class Either<T> {
+import java.io.Serializable;
+
+public class Either<T> implements Serializable {
     private final ExceptionCode code;
     private final T result;
 

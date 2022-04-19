@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-public record GetGlobalValueQuery() implements Command<Integer> {
+import java.io.Serializable;
+
+public record GetGlobalValueQuery() implements Command<Integer>, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_READ)
