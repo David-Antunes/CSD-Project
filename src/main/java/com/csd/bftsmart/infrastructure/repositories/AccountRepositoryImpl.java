@@ -39,9 +39,14 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
     @Override
     public Account save(Account account) {
-        users().get(account.userId()).accounts().add(account);
+        users().get(account.userId().email()).accounts().add(account);
         accounts().put(account.id(), account);
         return account;
+    }
+
+    @Override
+    public Account get(String accountId) {
+        return accounts().get(accountId);
     }
 
     @Override

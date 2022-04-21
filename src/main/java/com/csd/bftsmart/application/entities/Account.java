@@ -2,8 +2,8 @@ package com.csd.bftsmart.application.entities;
 
 import java.io.Serializable;
 
-public record Account(String id, String userId) implements Serializable,Comparable<Account> {
-
+public record Account(String id, User.Id userId) implements Serializable,Comparable<Account> {
+    
 
     public boolean equals(Object account) {
         if (account == null)

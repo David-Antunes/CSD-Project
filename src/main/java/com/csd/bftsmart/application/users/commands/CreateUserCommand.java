@@ -2,6 +2,7 @@ package com.csd.bftsmart.application.users.commands;
 
 import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Voidy;
+import com.csd.bftsmart.application.crypto.ECDSA;
 import com.csd.bftsmart.exceptions.Either;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.entities.User;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public record CreateUserCommand(String userId) implements Command<Either<Voidy>>, Serializable {
+public record CreateUserCommand(User.Id userId, String signBase64) implements Command<Either<Voidy>>, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)
@@ -29,7 +30,9 @@ public record CreateUserCommand(String userId) implements Command<Either<Voidy>>
 
         @Override
         public Either<Voidy> handle(CreateUserCommand command) {
-            if(users.contains(command.userId))
+            if(!ECDSA.verifySign(command.userId.base64pk(), command.signBase64, command.userId.email()))
+                return Either.failure(ExceptionCode.INVALID_SIGNATURE);
+            if(users.contains(command.userId.email()))
                 return Either.failure(ExceptionCode.USER_EXISTS);
 
             User user = new User(command.userId(), new ArrayList<>(2));

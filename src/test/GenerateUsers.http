@@ -2,9 +2,11 @@
 ## CreateUser
 POST http://localhost:8080/users
 Content-Type: application/json
+signature: mamas
 
 {
-  "userId": "1"
+  "userId": {"email": "1",
+  "base64pk": "mamas" }
 }
 
 ###
