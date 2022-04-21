@@ -14,27 +14,28 @@ docker run -it -p 8080:8080 bft
 
 To run bft with bft-smart you have two options:
 
-Or you run locally using:
+* Or you run locally using:
 
-```bash
-export BFT_ID=$1; export SPRING_PROFILES_ACTIVE=bftsmart; java -jar build/libs/bft-smart-0.0.1-SNAPSHOT.jar com.csd.bftsmart.BftSmartApplication
-```
+    ```bash
+    export BFT_ID=$1; export SPRING_PROFILES_ACTIVE=bftsmart; java -jar build/libs/bft-smart-0.0.1-SNAPSHOT.jar com.csd.bftsmart.BftSmartApplication
+    ```
 
-which is the bftsmart-start.sh.
+    which is the bftsmart-start.sh.
 
-Open one terminal and run
+    Open one terminal and run
 
-```bash
-./bftsmart-start.sh 0
-```
+    ```bash
+    ./bftsmart-start.sh 0
+    ```
 
-for 1 2 3 replicas
+    for 1 2 3 replicas
 
-Or you run with docker-compose:
 
-```bash
-docker-compose up
-```
+* Or you run with docker-compose:
+
+    ```bash
+    docker-compose up
+    ```
 
 keep in mind that in docker-compose the ips are different for each container. To configure docker-compose to run you have to change the hosts.config from this to
 
@@ -63,3 +64,5 @@ docker build . -t bft
 ```
 
 if you haven’t change any code, this is going to be very fast, if you have change source code then it will recompile.
+
+To enable HTTPS you must set SPRING_PROFILES_ACTIVE=tls,(other profiles) and KEYSTORE_PASSWORD=password
