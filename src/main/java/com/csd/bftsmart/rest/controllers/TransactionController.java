@@ -26,19 +26,20 @@ public class TransactionController {
     }
 
     @PostMapping()
-    public void sendTransaction(@RequestBody TransactionRequest transactionRequest) {
+    public void sendTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("signature") String signBase64) {
         HandleWebExceptions.resultOrException(new SendTransactionCommand(
-                transactionRequest.from(),
-                transactionRequest.to(),
-                transactionRequest.value()
-            ).execute(pipeline)
+                        transactionRequest.from(),
+                        transactionRequest.to(),
+                        transactionRequest.value(),
+                        signBase64
+                ).execute(pipeline)
         );
     }
 
     @PostMapping("/loadMoney/{accountId}")
-    public void loadMoney(@PathVariable String accountId, @RequestParam int value) {
+    public void loadMoney(@PathVariable String accountId, @RequestParam int value, @RequestHeader("signature") String signBase64) {
         HandleWebExceptions.resultOrException(
-                new LoadMoneyCommand(accountId, value).execute(pipeline)
+                new LoadMoneyCommand(accountId, value, signBase64).execute(pipeline)
         );
     }
 
@@ -61,7 +62,7 @@ public class TransactionController {
     }
 
     @GetMapping("/total")
-    public Map<Account, Integer> getGlobalValue(@RequestBody List<Account> accounts) {
+    public Map<String, Integer> getGlobalValue(@RequestBody List<String> accounts) {
         return new GetTotalValueQuery(accounts).execute(pipeline);
     }
 }

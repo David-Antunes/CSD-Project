@@ -25,9 +25,10 @@ public class UserController {
     }
 
     @PostMapping
-    public void createUser(@RequestBody UserRequest userRequest) {
+    public void createUser(@RequestBody UserRequest userRequest, @RequestHeader("signature") String signBase64) {
+
         HandleWebExceptions.resultOrException(
-                new CreateUserCommand(userRequest.userId()).execute(pipeline)
+                new CreateUserCommand(userRequest.userId(), signBase64).execute(pipeline)
         );
     }
 

@@ -21,7 +21,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        ledger.getUsers().put(user.id(), user);
+        ledger.getUsers().put(user.id().email(), user);
         return user;
     }
 

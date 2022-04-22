@@ -4,6 +4,8 @@ import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Voidy;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
+import com.csd.bftsmart.application.crypto.ECDSA;
+import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.exceptions.Either;
 import com.csd.bftsmart.exceptions.ExceptionCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-public record SendTransactionCommand(String from, String to, int value) implements Command<Either<Voidy>>, Serializable {
+public record SendTransactionCommand(String from, String to, int value,
+                                     String signBase64) implements Command<Either<Voidy>>, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)
@@ -27,13 +30,21 @@ public record SendTransactionCommand(String from, String to, int value) implemen
 
         @Override
         public Either<Voidy> handle(SendTransactionCommand command) {
-            if(command.value < 0)
+
+            if (command.value < 0)
                 return Either.failure(ExceptionCode.INVALID_VALUE);
-            else if(command.to.equals(command.from))
-                return Either.failure(ExceptionCode.SAME_ACCOUNT);
-            else if(!accounts.contains(command.to) || !accounts.contains(command.from))
+
+            Account account = accounts.get(command.from);
+            if(account == null)
                 return Either.failure(ExceptionCode.ACCOUNT_DOES_NOT_EXIST);
-            else if(accounts.getBalance(command.from) < command.value)
+
+            if (!ECDSA.verifySign(account.userId().base64pk(), command.signBase64, command.from + command.to + command.value))
+                return Either.failure(ExceptionCode.INVALID_SIGNATURE);
+            if (command.to.equals(command.from))
+                return Either.failure(ExceptionCode.SAME_ACCOUNT);
+            if (!accounts.contains(command.to))
+                return Either.failure(ExceptionCode.ACCOUNT_DOES_NOT_EXIST);
+            if (accounts.getBalance(command.from) < command.value)
                 return Either.failure(ExceptionCode.NOT_ENOUGH_BALANCE);
 
             accounts.sendTransaction(command.from, command.to, command.value);

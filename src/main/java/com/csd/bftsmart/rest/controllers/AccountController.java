@@ -30,9 +30,9 @@ public class AccountController {
     }
 
     @PostMapping
-    public void createAccount(@RequestBody AccountRequest accountRequest) {
+    public void createAccount(@RequestBody AccountRequest accountRequest, @RequestHeader("signature") String signBase64) {
         HandleWebExceptions.resultOrException(
-                new CreateAccountCommand(accountRequest.userId(), accountRequest.accountId()).execute(pipeline)
+                new CreateAccountCommand(accountRequest.userId(), accountRequest.accountId(), signBase64).execute(pipeline)
         );
     }
 

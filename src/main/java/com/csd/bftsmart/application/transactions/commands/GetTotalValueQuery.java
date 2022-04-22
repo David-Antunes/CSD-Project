@@ -12,10 +12,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public record GetTotalValueQuery(List<Account> accounts) implements Command<Map<Account, Integer>>, Serializable {
+public record GetTotalValueQuery(List<String> accounts) implements Command<Map<String, Integer>>, Serializable {
     @Component
     @Qualifier(CommandTypes.APP_READ)
-    public static class Handler implements Command.Handler<GetTotalValueQuery, Map<Account, Integer>> {
+    public static class Handler implements Command.Handler<GetTotalValueQuery, Map<String, Integer>> {
 
         private final AccountRepository accounts;
         @Autowired
@@ -23,7 +23,7 @@ public record GetTotalValueQuery(List<Account> accounts) implements Command<Map<
             this.accounts = accounts;
         }
 
-        public Map<Account, Integer> handle(GetTotalValueQuery command) {
+        public Map<String, Integer> handle(GetTotalValueQuery command) {
             return accounts.getTotalValue(command.accounts);
         }
     }
