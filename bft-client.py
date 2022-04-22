@@ -1,3 +1,4 @@
+import json
 import requests
 import jks
 import ecdsa
@@ -11,6 +12,7 @@ _BASE_URL = 'http://localhost:8080'
 _USERS = '/users'
 _ACCOUNTS = "/accounts"
 _TRANSACTIONS = "/transactions"
+_LEDGER = "/ledger"
 # keystore = jks.KeyStore.load('user1.jks', 'user1')
 # pkey = keystore.private_keys['user1']
 # # cert = keystore.certs
@@ -53,39 +55,42 @@ def load_user(userId, password):
         return False
 
 def create_user():
-    response=base64.b64encode(bytes(OpenSSL.crypto.sign(priv_key, current_user, "sha512"))).decode('utf-8')
-    r = requests.post(_BASE_URL + _USERS, json={ "userId":{ "email": current_user, "base64pk": str(pub_key)}}, headers={'signature': str(response)})
-    print(r.content)
+    json_body = { "userId":{ "email": current_user, "base64pk": str(pub_key)}}
+    generatePostRequest(_BASE_URL + _USERS, current_user, json_body)
 
 def create_account(accountId):
     print(accountId)
-    response=base64.b64encode(bytes(OpenSSL.crypto.sign(priv_key, accountId, "sha512"))).decode('utf-8')
-    r = requests.post(_BASE_URL + _ACCOUNTS, json={ "userId":{ "email": current_user, "base64pk": str(pub_key)}, "accountId": accountId}, headers={'signature': str(response)})
-    print(r.content)
+    json_body = { "userId":{ "email": current_user, "base64pk": str(pub_key)}, "accountId": accountId}
+    generatePostRequest(_BASE_URL + _ACCOUNTS, accountId, json_body)
 
 def loadMoney(to, value):
     json_body = {"from" : "", "to": to, "value": value}
     generatePostRequest(_BASE_URL + _TRANSACTIONS + "/loadMoney/" + to + "?value=" + value, to+value, json_body)
 
-def send_transaction():
-    pass
-def balance():
-    pass
+def send_transaction(accountId, to, value):
+    json_body = {"from" : accountId, "to" : to, "value" : value}
+    generatePostRequest(_BASE_URL + _TRANSACTIONS, accountId + to + value, json_body)
 
-def extract():
-    pass
+def balance(accountId):
+    r = requests.get(_BASE_URL + _ACCOUNTS + "/balance/" + accountId)
+    print(r.content)
+
+def extract(accountId):
+    r = requests.get(_BASE_URL + _TRANSACTIONS + "/extract/" + accountId)
+    print(r.content)
 
 def ledger():
-    pass
+    r = requests.get(_BASE_URL + _LEDGER)
+    print(r.content)
 
-def total_value():
-    pass
+def total_value(tokens):
+    json_body = tokens
+    r = requests.get(_BASE_URL + _TRANSACTIONS + "/total", json = json_body)
+    print(r.content)
 
 def global_value():
-    pass
-
-def getLedger():
-    pass
+    r = requests.get(_BASE_URL + _TRANSACTIONS + "/global")
+    print(r.content)
 
 def list_accounts():
     pass
@@ -173,9 +178,9 @@ def processToken(tokens):
     elif tokens[0] == "ggv":
         global_value()
     elif tokens[0] == "gtv":
-        global_value(tokens[1:])
+        total_value(tokens[1:])
     elif tokens[0] == "gl":
-        getLedger()
+        ledger()
     else:
         print("Unknown command.")
         return

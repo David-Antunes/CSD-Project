@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 public class AccountRepositoryImpl implements AccountRepository {
@@ -111,18 +110,22 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public Map<Account, Integer> getTotalValue(List<Account> accounts) {
-        Map<Account, Integer> accountValues = new HashMap<>(accounts.size());
+    public Map<String, Integer> getTotalValue(List<String> accounts) {
+        Map<String, Integer> accountValues = new HashMap<>(accounts.size());
 
-        for(Account account: accounts)
+        for(String account: accounts)
             accountValues.put(account, 0);
         for(Transaction transaction: transactions()) {
-            Account to = transaction.to();
-            Account from = transaction.from();
-            if(to != null && accountValues.containsKey(to))
-                accountValues.put(to, accountValues.get(to) + getTransactionValue(transaction, to.id()));
-            if(from != null && accountValues.containsKey(from))
-                accountValues.put(from, accountValues.get(from) + getTransactionValue(transaction, from.id()));
+            if(!(transaction.to() == null)) {
+                String to = transaction.to().id();
+                String from = null;
+                if(transaction.from() != null)
+                    from = transaction.from().id();
+                if(to != null && accountValues.containsKey(to))
+                    accountValues.put(to, accountValues.get(to) + getTransactionValue(transaction, to));
+                if(from != null && accountValues.containsKey(from))
+                    accountValues.put(from, accountValues.get(from) + getTransactionValue(transaction, from));
+            }
         }
 
         return accountValues;
