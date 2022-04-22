@@ -5,6 +5,7 @@ import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
 import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
+import com.csd.bftsmart.infrastructure.persistence.OperationCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,10 +15,12 @@ import java.util.*;
 public class AccountRepositoryImpl implements AccountRepository {
 
     private final InMemoryLedger ledger;
+    private final OperationCache cache;
 
     @Autowired
-    public AccountRepositoryImpl(InMemoryLedger ledger) {
+    public AccountRepositoryImpl(InMemoryLedger ledger, OperationCache cache) {
         this.ledger = ledger;
+        this.cache = cache;
     }
 
     private TreeMap<String, User> users() {
@@ -59,7 +62,9 @@ public class AccountRepositoryImpl implements AccountRepository {
         Account origin = accounts().get(from);
         Account destination = accounts().get(to);
         int previousTransactionId = transactions().get(transactions().size() - 1).id();
-        transactions().add(new Transaction(previousTransactionId + 1, origin, destination, value));
+        Transaction transaction = new Transaction(previousTransactionId + 1, origin, destination, value);
+        transactions().add(transaction);
+        cache.registerTransaction(transaction);
     }
 
     @Override
