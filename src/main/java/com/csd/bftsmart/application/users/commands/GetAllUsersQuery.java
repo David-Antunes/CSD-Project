@@ -2,6 +2,7 @@ package com.csd.bftsmart.application.users.commands;
 
 import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
+import com.csd.bftsmart.application.commands.ReadCommand;
 import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.application.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.List;
 
-public record GetAllUsersQuery() implements Command<List<User>>, Serializable {
+public record GetAllUsersQuery() implements Command<List<User>>, ReadCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_READ)

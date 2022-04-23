@@ -3,13 +3,14 @@ package com.csd.bftsmart.application.transactions.commands;
 import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
+import com.csd.bftsmart.application.commands.ReadCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-public record GetGlobalValueQuery() implements Command<Integer>, Serializable {
+public record GetGlobalValueQuery() implements Command<Integer>, ReadCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_READ)

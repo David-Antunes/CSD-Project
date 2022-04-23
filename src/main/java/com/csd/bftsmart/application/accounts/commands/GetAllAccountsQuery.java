@@ -3,6 +3,7 @@ package com.csd.bftsmart.application.accounts.commands;
 import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
+import com.csd.bftsmart.application.commands.ReadCommand;
 import com.csd.bftsmart.application.entities.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.List;
 
-public record GetAllAccountsQuery() implements Command<List<Account>>, Serializable {
+public record GetAllAccountsQuery() implements Command<List<Account>>, ReadCommand, Serializable {
         @Component
         @Qualifier(CommandTypes.APP_READ)
         public static class Handler implements Command.Handler<GetAllAccountsQuery, List<Account>> {

@@ -2,26 +2,26 @@ package com.csd.bftsmart.infrastructure.bftsmart.client;
 
 import an.awesome.pipelinr.Command;
 import bftsmart.tom.ServiceProxy;
+import com.csd.bftsmart.application.commands.ReadCommand;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 
 @Slf4j
 @Component
-@Qualifier(PipelinrConfig.BFT_SMART_APP_WRITE)
+@Qualifier(PipelinrConfig.BFT_SMART_APP_READ)
 @ConditionalOnProperty(name = "bftsmart.enabled")
-public class BftSmartCommandHandler<C extends Command<R>, R> implements Command.Handler<C, R> {
+public class BftSmartReadCommandHandler<C extends Command<R>, R> implements Command.Handler<C, R> {
 
     private final ServiceProxy serviceProxy;
 
     @Autowired
-    public BftSmartCommandHandler(ServiceProxy serviceProxy) {
+    public BftSmartReadCommandHandler(ServiceProxy serviceProxy) {
         this.serviceProxy = serviceProxy;
     }
 
@@ -36,8 +36,7 @@ public class BftSmartCommandHandler<C extends Command<R>, R> implements Command.
             objOut.flush();
             byteOut.flush();
 
-            //TODO add etiquette interface to C to select invoke method
-            byte[] reply = serviceProxy.invokeOrdered(byteOut.toByteArray());
+            byte[] reply = serviceProxy.invokeUnordered(byteOut.toByteArray());
             if (reply.length == 0)
                 return null;
             try (ByteArrayInputStream byteIn = new ByteArrayInputStream(reply);
@@ -45,13 +44,13 @@ public class BftSmartCommandHandler<C extends Command<R>, R> implements Command.
                 return (R)objIn.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
-            log.warn("Exception putting value into map: ", e);
+            log.warn("Exception handling command: ", e);
             return null;
         }
     }
 
     @Override
     public boolean matches(C command) {
-        return true; //TODO a safer alternative would be nice
+        return command instanceof ReadCommand;
     }
 }

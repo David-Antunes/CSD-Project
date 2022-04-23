@@ -2,6 +2,7 @@ package com.csd.bftsmart.application.ledger.commands;
 
 import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
+import com.csd.bftsmart.application.commands.ReadCommand;
 import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-public record GetLedgerQuery() implements Command<InMemoryLedger>, Serializable {
+public record GetLedgerQuery() implements Command<InMemoryLedger>, ReadCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_READ)

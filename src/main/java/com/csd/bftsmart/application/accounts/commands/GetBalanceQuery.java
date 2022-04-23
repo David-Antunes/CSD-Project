@@ -3,6 +3,7 @@ package com.csd.bftsmart.application.accounts.commands;
 import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
+import com.csd.bftsmart.application.commands.ReadCommand;
 import com.csd.bftsmart.exceptions.Either;
 import com.csd.bftsmart.exceptions.ExceptionCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-public record GetBalanceQuery(String accountId) implements Command<Either<Integer>>, Serializable {
+public record GetBalanceQuery(String accountId) implements Command<Either<Integer>>, ReadCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_READ)

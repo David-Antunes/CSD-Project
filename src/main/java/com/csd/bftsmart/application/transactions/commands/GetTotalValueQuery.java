@@ -3,6 +3,7 @@ package com.csd.bftsmart.application.transactions.commands;
 import an.awesome.pipelinr.Command;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
+import com.csd.bftsmart.application.commands.ReadCommand;
 import com.csd.bftsmart.application.entities.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,7 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public record GetTotalValueQuery(List<String> accounts) implements Command<Map<String, Integer>>, Serializable {
+public record GetTotalValueQuery(List<String> accounts) implements Command<Map<String, Integer>>, ReadCommand, Serializable {
     @Component
     @Qualifier(CommandTypes.APP_READ)
     public static class Handler implements Command.Handler<GetTotalValueQuery, Map<String, Integer>> {

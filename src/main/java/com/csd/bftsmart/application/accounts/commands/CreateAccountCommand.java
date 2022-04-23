@@ -4,6 +4,7 @@ import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Voidy;
 import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
+import com.csd.bftsmart.application.commands.WriteCommand;
 import com.csd.bftsmart.application.crypto.ECDSA;
 import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.User;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-public record   CreateAccountCommand(User.Id userId, String accountId, String signBase64) implements Command<Either<Voidy>>, Serializable {
+public record   CreateAccountCommand(User.Id userId, String accountId, String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)
