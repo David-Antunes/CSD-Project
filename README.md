@@ -17,7 +17,7 @@ To run bft with bft-smart you have two options:
 * Or you run locally using:
 
     ```bash
-    export BFT_ID=$1; export SPRING_PROFILES_ACTIVE=bftsmart; java -jar build/libs/bft-smart-0.0.1-SNAPSHOT.jar com.csd.bftsmart.BftSmartApplication
+    export REPLICA_ID=$1; export SPRING_PROFILES_ACTIVE=bftsmart; java -jar build/libs/bft-smart-0.0.1-SNAPSHOT.jar com.csd.bftsmart.BftSmartApplication
     ```
 
     which is the bftsmart-start.sh.
