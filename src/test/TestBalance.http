@@ -1,0 +1,100 @@
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "1"
+}
+
+###
+## CreateAccount
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "accountId": "1"
+}
+
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "1",
+  "value": 100
+}
+###
+##
+GET http://localhost:8080/accounts/balance/account1
+Accept: application/json

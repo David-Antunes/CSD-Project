@@ -3,3 +3,8 @@
 gradlew.bat
 
 build/
+
+env/
+venv/
+*.jks
+bin/

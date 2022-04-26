@@ -1,4 +1,5 @@
 package com.csd.bftsmart.rest.requests;
 
-public record UserRequest(String userId) {
-}
+import com.csd.bftsmart.application.entities.User;
+
+public record UserRequest(User.Id userId) {}

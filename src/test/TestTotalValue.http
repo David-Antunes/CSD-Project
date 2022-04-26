@@ -1,0 +1,154 @@
+###
+## CreateUser
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "userId": "1"
+}
+
+###
+## CreateAccount
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "accountId": "1"
+}
+
+###
+## CreateAccount
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "accountId": "2"
+}
+
+###
+## LoadMoney
+POST http://localhost:8080/transactions/loadMoney/1?value=1000
+Content-Type: application/json
+
+###
+## LoadMoney
+POST http://localhost:8080/transactions/loadMoney/2?value=1000
+Content-Type: application/json
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "2",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "2",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "2",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "2",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "2",
+  "value": 100
+}
+
+###
+## SendTransaction
+POST http://localhost:8080/transactions
+Content-Type: application/json
+
+{
+  "from": "1",
+  "to": "2",
+  "value": 100
+}
+
+###
+##
+GET http://localhost:8080/accounts/balance/1
+Accept: application/json
+
+###
+##
+GET http://localhost:8080/accounts/balance/2
+Accept: application/json
+
+
+###
+## SendTransaction
+GET http://localhost:8080/transactions/total
+Accept: application/json
+Content-Type: application/json
+
+[
+  {
+    "id": "1",
+    "userId": "1"
+  },
+  {
+    "id": "2",
+    "userId": "1"
+  }
+]
+
+###
+## GetAllTransactions
+GET http://localhost:8080/transactions
+Accept: application/json
+
+###
+## SendTransaction
+GET http://localhost:8080/transactions/total
+Accept: application/json
+Content-Type: application/json
+
+[
+  {
+    "id": "1",
+    "userId": "1"
+  },
+  {
+    "id": "2",
+    "userId": "1"
+  }
+]
