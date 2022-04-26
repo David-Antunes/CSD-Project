@@ -245,25 +245,25 @@ def verify_num_of_args(tokens):
             print("Not enough args.")
             return False
     elif tokens[0] == "lm":
-        if len(tokens[1:]) == 2:
+        if len(tokens[1:]) < 2:
             print("Not enough args.")
             return False
     elif tokens[0] == "st":
-        if len(tokens[1:]) == 3:
+        if len(tokens[1:]) < 3:
             print("Not enough args.")
             return False
     elif tokens[0] == "gb":
-        if len(tokens[1:]) == 1:
+        if len(tokens[1:]) < 1:
             print("Not enough args.")
             return False
     elif tokens[0] == "ge":
-        if len(tokens[1:]) == 1:
+        if len(tokens[1:]) < 1:
             print("Not enough args.")
             return False
     elif tokens[0] == "ggv":
         return True
     elif tokens[0] == "gtv":
-        if len(tokens[1:]) == 0:
+        if len(tokens[1:]) < 1:
             print("Not enough args.")
             return False
     elif tokens[0] == "gl":
