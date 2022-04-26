@@ -4,7 +4,9 @@ import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Pipeline;
 import an.awesome.pipelinr.Pipelinr;
 import com.csd.bftsmart.application.CommandTypes;
+import com.csd.bftsmart.application.middlewares.LedgerPersistable;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -29,9 +31,11 @@ public class PipelinrConfig {
     @Bean
     @Qualifier(CommandTypes.APP_WRITE)
     Pipeline readWritePipeline(@Qualifier(CommandTypes.APP_READ) ObjectProvider<Command.Handler> readCommandHandlers,
-                               @Qualifier(CommandTypes.APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers) {
+                               @Qualifier(CommandTypes.APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers,
+                               @Autowired LedgerPersistable ledgerMiddleware) {
         return new Pipelinr()
-                .with(() -> Stream.concat(readCommandHandlers.stream(), writeCommandHandlers.stream()));
+                .with(() -> Stream.concat(readCommandHandlers.stream(), writeCommandHandlers.stream()))
+                .with(() -> Stream.of(ledgerMiddleware));
     }
 
     @Bean
@@ -53,9 +57,11 @@ public class PipelinrConfig {
         @Bean
         @Qualifier(BFT_SMART_APP_WRITE)
         Pipeline bftSmartReadWritePipeline(@Qualifier(BFT_SMART_APP_READ) ObjectProvider<Command.Handler> readCommandHandlers,
-                                           @Qualifier(BFT_SMART_APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers) {
+                                           @Qualifier(BFT_SMART_APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers,
+                                           @Autowired LedgerPersistable ledgerMiddleware) {
             return new Pipelinr()
-                    .with(() -> Stream.concat(readCommandHandlers.stream(), writeCommandHandlers.stream()));
+                    .with(() -> Stream.concat(readCommandHandlers.stream(), writeCommandHandlers.stream()))
+                    .with(() -> Stream.of(ledgerMiddleware));
         }
 
         @Bean
