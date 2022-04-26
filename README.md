@@ -1,68 +1,118 @@
+# CSD
+
 # CSD Project
 
-To build docker image run:
+Author: André Palma Santos 55415
+
+Author: David Antunes 55045
+
+## Build project
+
+To have a full functioning prototype it is required to build the docker image for the application using bft-smart
+
+### Full build
+
+To build the whole project including client and application run:
+
+```bash
+./build.sh
+```
+
+### Application
+
+To build the docker image for the application run:
 
 ```bash
 docker build . -t bft
 ```
 
-To run bft without bft-smart run:
+### Client
+
+To build the client run:
 
 ```bash
-docker run -it -p 8080:8080 bft
+docker build client/ bft-client
 ```
 
-To run bft with bft-smart you have two options:
+## Run
 
-* Or you run locally using:
+To run the project it is required two terminals.
 
-    ```bash
-    export REPLICA_ID=$1; export SPRING_PROFILES_ACTIVE=bftsmart; java -jar build/libs/bft-smart-0.0.1-SNAPSHOT.jar com.csd.bftsmart.BftSmartApplication
-    ```
-
-    which is the bftsmart-start.sh.
-
-    Open one terminal and run
-
-    ```bash
-    ./bftsmart-start.sh 0
-    ```
-
-    for 1 2 3 replicas
-
-
-* Or you run with docker-compose:
-
-    ```bash
-    docker-compose up
-    ```
-
-keep in mind that in docker-compose the ips are different for each container. To configure docker-compose to run you have to change the hosts.config from this to
+In one terminal run:
 
 ```bash
-0 127.0.0.1 11000 11001
-1 127.0.0.1 11010 11011
-2 127.0.0.1 11020 11021
-3 127.0.0.1 11030 11031
+docker-compose up
 ```
 
-to this
+In case you don’t docker-compose go to [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
+
+In the other terminal run the client:
 
 ```bash
-0 172.20.0.2 11000 11001
-1 172.20.0.3 11010 11011
-2 172.20.0.4 11020 11021
-3 172.20.0.5 11030 11031
+docker run -it --network csdproject_bft bft-client
 ```
 
-and to also delete the currentView file as this contains the previous ips
+## Client
 
-after that run
+The client contains two states. The initial state is to decide if you want to login to a user, fill the application with some data or do a benchmark.
 
-```bash
-docker build . -t bft
+The benchmark command will generate the users, accounts and generate 10000 transactions on 4 threads
+
+```
+lu <userId> <password> ---- Start user session
+fill ---- Fills the ledger with data
+benchmark ---- Starts a pull of threads and generates transactions.
+help
+exit
 ```
 
-if you haven’t change any code, this is going to be very fast, if you have change source code then it will recompile.
+On the second state you have access to 4 users:
 
-To enable HTTPS you must set SPRING_PROFILES_ACTIVE=tls,(other profiles) and KEYSTORE_PASSWORD=password
+user: user1 password: user1
+
+user: user2 password: user2
+
+user: user3 password: user3
+
+user: user4 password: user4
+
+to login a user you have to run:
+
+```
+lu user1 user1
+```
+
+then the prompt will change to:
+
+```
+user1>
+```
+
+In this state the program is loaded with the key pair of the user1 and every write call function will be signed.
+
+In this state you will have access to the following commands:
+
+```
+ca <accountId> ---- create account
+cu ---- create current user in the system
+chu <userId> <password> ---- Change to another user
+lu ---- list all users
+lm <accountId> <value> ---- Load Money
+st <from_accountId> <to_accountId> <value> ---- Send Transaction
+gb <accountId> ---- get Balance
+ge <accountId> ---- get Extract
+ggv ---- get global Value
+gtv <account1> <account2> ... <accountN> ---- get total value
+gl ---- get ledger
+help
+exit
+user1>
+```
+
+cu — registers the current logged in user in the system
+
+ca — creates a new account on user1
+
+chu — changes to a new user
+
+st — sends a transaction from the accountId to another accountId registered in the system with the given value
