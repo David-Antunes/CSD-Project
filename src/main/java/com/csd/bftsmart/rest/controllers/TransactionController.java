@@ -1,7 +1,6 @@
 package com.csd.bftsmart.rest.controllers;
 
 import an.awesome.pipelinr.Pipeline;
-import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
 import com.csd.bftsmart.application.transactions.commands.*;
 import com.csd.bftsmart.exceptions.HandleWebExceptions;

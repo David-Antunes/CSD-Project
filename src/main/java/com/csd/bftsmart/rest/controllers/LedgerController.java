@@ -2,7 +2,6 @@ package com.csd.bftsmart.rest.controllers;
 
 import an.awesome.pipelinr.Pipeline;
 import com.csd.bftsmart.application.ledger.commands.GetLedgerQuery;
-import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.bftsmart.rest.responses.LedgerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
