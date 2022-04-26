@@ -62,7 +62,7 @@ public class TransactionController {
     }
 
     @GetMapping("/total")
-    public Map<String, Integer> getGlobalValue(@RequestBody List<String> accounts) {
+    public Map<String, Integer> getTotalValue(@RequestBody List<String> accounts) {
         return new GetTotalValueQuery(accounts).execute(pipeline);
     }
 }
