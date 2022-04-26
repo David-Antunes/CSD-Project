@@ -4,6 +4,7 @@ import an.awesome.pipelinr.Pipeline;
 import com.csd.bftsmart.application.ledger.commands.GetLedgerQuery;
 import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
+import com.csd.bftsmart.rest.responses.LedgerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,9 @@ public class LedgerController {
     }
 
     @GetMapping()
-    public InMemoryLedger getLedger() {return new GetLedgerQuery().execute(pipeline);}
+    public LedgerResponse getLedger() {
+        var ledger = new GetLedgerQuery().execute(pipeline);
+        return new LedgerResponse(ledger.getUsers(), ledger.getAccounts(), ledger.getTransactions(), ledger.getCommands());
+    }
 
 }
