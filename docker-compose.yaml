@@ -4,11 +4,11 @@ services:
     hostname: bftsmart0
     image: bft
     ports:
-      - "11000:11000"
-      - "8080:8080"
+      - "8080:8443"
     environment:
       BFT_ID: 0
-      SPRING_PROFILES_ACTIVE: bftsmart
+      SPRING_PROFILES_ACTIVE: bftsmart,tls
+      KEYSTORE_PASSWORD: password
     networks:
       bft:
         ipv4_address: 172.20.0.2
@@ -16,11 +16,11 @@ services:
     hostname: bftsmart1
     image: bft
     ports:
-      - "11010:11010"
-      - "8081:8080"
+      - "8081:8443"
     environment:
       BFT_ID: 1
-      SPRING_PROFILES_ACTIVE: bftsmart
+      SPRING_PROFILES_ACTIVE: bftsmart,tls
+      KEYSTORE_PASSWORD: password
     networks:
       bft:
         ipv4_address: 172.20.0.3
@@ -28,11 +28,11 @@ services:
     hostname: bftsmart2
     image: bft
     ports:
-      - "11020:11020"
-      - "8082:8080"
+      - "8082:8443"
     environment:
       BFT_ID: 2
-      SPRING_PROFILES_ACTIVE: bftsmart
+      SPRING_PROFILES_ACTIVE: bftsmart,tls
+      KEYSTORE_PASSWORD: password
     networks:
       bft:
         ipv4_address: 172.20.0.4
@@ -40,10 +40,11 @@ services:
     hostname: bftsmart3
     image: bft
     ports:
-      - "8083:8080"
+      - "8083:8443"
     environment:
       BFT_ID: 3
-      SPRING_PROFILES_ACTIVE: bftsmart
+      SPRING_PROFILES_ACTIVE: bftsmart,tls
+      KEYSTORE_PASSWORD: password
     networks:
       bft:
         ipv4_address: 172.20.0.5
