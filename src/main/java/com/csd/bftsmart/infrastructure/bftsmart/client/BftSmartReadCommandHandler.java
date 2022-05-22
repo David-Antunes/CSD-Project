@@ -4,49 +4,24 @@ import an.awesome.pipelinr.Command;
 import bftsmart.tom.ServiceProxy;
 import com.csd.bftsmart.application.commands.ReadCommand;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
-
-@Slf4j
 @Component
 @Qualifier(PipelinrConfig.BFT_SMART_APP_READ)
 @ConditionalOnProperty(name = "bftsmart.enabled")
-public class BftSmartReadCommandHandler<C extends Command<R>, R> implements Command.Handler<C, R> {
-
-    private final ServiceProxy serviceProxy;
+public class BftSmartReadCommandHandler<C extends Command<R>, R> extends BftSmartGenericCommandHandler<C, R> {
 
     @Autowired
     public BftSmartReadCommandHandler(ServiceProxy serviceProxy) {
-        this.serviceProxy = serviceProxy;
+        super(serviceProxy);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public R handle(C command) {
-        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-             ObjectOutput objOut = new ObjectOutputStream(byteOut)) {
-
-            objOut.writeObject(command);
-
-            objOut.flush();
-            byteOut.flush();
-
-            byte[] reply = serviceProxy.invokeUnordered(byteOut.toByteArray());
-            if (reply.length == 0)
-                return null;
-            try (ByteArrayInputStream byteIn = new ByteArrayInputStream(reply);
-                 ObjectInput objIn = new ObjectInputStream(byteIn)) {
-                return (R)objIn.readObject();
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            log.warn("Exception handling command: ", e);
-            return null;
-        }
+        return handleAs(command, serviceProxy::invokeUnordered);
     }
 
     @Override
