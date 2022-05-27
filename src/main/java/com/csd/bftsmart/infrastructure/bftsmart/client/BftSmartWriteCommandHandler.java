@@ -1,7 +1,8 @@
 package com.csd.bftsmart.infrastructure.bftsmart.client;
 
 import an.awesome.pipelinr.Command;
-import bftsmart.tom.ServiceProxy;
+import bftsmart.tom.AsynchServiceProxy;
+import bftsmart.tom.core.messages.TOMMessageType;
 import com.csd.bftsmart.application.commands.WriteCommand;
 import com.csd.bftsmart.infrastructure.pipelinr.PipelinrConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,13 @@ import org.springframework.stereotype.Component;
 public class BftSmartWriteCommandHandler<C extends Command<R>, R> extends BftSmartGenericCommandHandler<C, R> {
 
     @Autowired
-    public BftSmartWriteCommandHandler(ServiceProxy serviceProxy) {
+    public BftSmartWriteCommandHandler(AsynchServiceProxy serviceProxy) {
         super(serviceProxy);
     }
 
     @Override
     public R handle(C command) {
-        return handleAs(command, serviceProxy::invokeOrdered);
+        return handleAs(command, TOMMessageType.ORDERED_REQUEST);
     }
 
     @Override
