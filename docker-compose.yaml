@@ -5,6 +5,7 @@ services:
     image: bft
     ports:
       - "8080:8443"
+      - "5005:5005"
     environment:
       REPLICA_ID: 0
       SPRING_PROFILES_ACTIVE: bftsmart,tls
