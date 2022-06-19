@@ -15,7 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-public record LoadMoneyCommand(String accountId, int value, String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
+public record LoadMoneyCommand(String accountId, int value,
+                               String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)
@@ -31,14 +32,13 @@ public record LoadMoneyCommand(String accountId, int value, String signBase64) i
         @Override
         public Either<Voidy> handle(LoadMoneyCommand command) {
             Account account = accounts.get(command.accountId);
-            if(account == null)
+            if (account == null)
                 return Either.failure(ExceptionCode.ACCOUNT_DOES_NOT_EXIST);
-            if(!ECDSA.verifySign(account.userId().base64pk(), command.signBase64, command.accountId + command.value))
+            if (!ECDSA.verifySign(account.userId().base64pk(), command.signBase64, command.accountId + command.value))
                 return Either.failure(ExceptionCode.INVALID_SIGNATURE);
-            else if(command.value < 0)
+            else if (command.value < 0)
                 return Either.failure(ExceptionCode.INVALID_VALUE);
 
-            accounts.updateBalanceById(command.accountId(), command.value());
             return Either.success();
         }
     }

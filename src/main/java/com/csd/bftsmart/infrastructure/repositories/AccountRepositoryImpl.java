@@ -1,14 +1,21 @@
 package com.csd.bftsmart.infrastructure.repositories;
 
 import com.csd.bftsmart.application.accounts.AccountRepository;
+import com.csd.bftsmart.application.accounts.commands.CreateAccountCommand;
 import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.Transaction;
-import com.csd.bftsmart.application.entities.User;
+import com.csd.bftsmart.application.transactions.commands.LoadMoneyCommand;
+import com.csd.bftsmart.application.transactions.commands.SendTransactionCommand;
 import com.csd.bftsmart.infrastructure.persistence.InMemoryLedger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class AccountRepositoryImpl implements AccountRepository {
@@ -20,56 +27,54 @@ public class AccountRepositoryImpl implements AccountRepository {
         this.ledger = ledger;
     }
 
-    private TreeMap<String, User> users() {
-        return ledger.getUsers();
-    }
-
-    private TreeMap<String, Account> accounts() {
-        return ledger.getAccounts();
-    }
-
-    private ArrayList<Transaction> transactions() {
-        return ledger.getTransactions();
-    }
-
     @Override
     public boolean contains(String accountId) {
-        return accounts().containsKey(accountId);
-    }
-    @Override
-    public Account save(Account account) {
-        users().get(account.userId().email()).accounts().add(account);
-        accounts().put(account.id(), account);
-        return account;
+        return ledger.getCommands().stream()
+                .filter(CreateAccountCommand.class::isInstance)
+                .map(CreateAccountCommand.class::cast)
+                .map(CreateAccountCommand::accountId)
+                .anyMatch(accountId::equals);
     }
 
     @Override
     public Account get(String accountId) {
-        return accounts().get(accountId);
-    }
-
-    @Override
-    public void updateBalanceById(String id, int value) {
-        Account account = accounts().get(id);
-        int previousTransactionId = transactions().get(transactions().size() - 1).id();
-        transactions().add(new Transaction(previousTransactionId + 1, null, account, value));
-    }
-    @Override
-    public void sendTransaction(String from, String to, int value) {
-        Account origin = accounts().get(from);
-        Account destination = accounts().get(to);
-        int previousTransactionId = transactions().get(transactions().size() - 1).id();
-        transactions().add(new Transaction(previousTransactionId + 1, origin, destination, value));
+        var accounts = ledger.getCommands().stream()
+                .filter(CreateAccountCommand.class::isInstance)
+                .map(CreateAccountCommand.class::cast)
+                .filter(accountCommand -> accountCommand.accountId().equals(accountId))
+                .map(accountCommand -> new Account(accountCommand.accountId(), accountCommand.userId()))
+                .toList();
+        if (accounts.isEmpty()) {
+            return null;
+        } else {
+            return accounts.get(0);
+        }
     }
 
     @Override
     public List<Transaction> getAllTransactions() {
-        return transactions();
+        return getTransactionStream()
+                .toList();
+    }
+
+    private Stream<Transaction> getTransactionStream() {
+        AtomicInteger id = new AtomicInteger(0); //TODO
+        return ledger.getCommands().stream()
+                .filter(command -> command instanceof LoadMoneyCommand || command instanceof SendTransactionCommand)
+                .map(command -> {
+                    if (command instanceof LoadMoneyCommand loadMoneyCommand) {
+                        return new Transaction(id.incrementAndGet(), null, get(loadMoneyCommand.accountId()), loadMoneyCommand.value());
+                    }
+                    Account from = get(((SendTransactionCommand) command).from());
+                    Account to = get(((SendTransactionCommand) command).to());
+                    int value = ((SendTransactionCommand) command).value();
+                    return new Transaction(id.incrementAndGet(), from, to, value);
+                });
     }
 
     @Override
     public List<Transaction> getExtract(String accountId) {
-        return transactions().stream()
+        return getTransactionStream()
                 .filter(transaction ->
                         checkTransactionForAccount(transaction.from(), accountId) || checkTransactionForAccount(transaction.to(), accountId))
                 .toList();
@@ -81,20 +86,19 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public int getBalance(String accountId) {
-        int balance = 0;
-        for (Transaction transaction: transactions()) {
-            balance += getTransactionValue(transaction, accountId);
-        }
-        return balance;
+        return getTransactionStream()
+                .map(transaction -> getTransactionValue(transaction, accountId))
+                .reduce(Integer::sum)
+                .orElse(0);
     }
 
     private int getTransactionValue(Transaction transaction, String accountId) {
-        if(accountId == null || accountId.equals(""))
+        if (accountId == null || accountId.equals(""))
             return 0;
 
         if (transaction.to() != null && transaction.to().id().equals(accountId)) {
             return transaction.value();
-        } else if(transaction.from() != null && transaction.from().id().equals(accountId)) {
+        } else if (transaction.from() != null && transaction.from().id().equals(accountId)) {
             return -transaction.value();
         } else
             return 0;
@@ -102,37 +106,28 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public int getGlobalValue() {
-        int balance = 0;
-        for (Transaction transaction: transactions()) {
-            balance += transaction.from() == null ? transaction.value() : 0;
-        }
-        return balance;
+        return getTransactionStream()
+                .filter(transaction -> transaction.from() == null)
+                .map(Transaction::value)
+                .reduce(Integer::sum)
+                .orElse(0);
     }
 
     @Override
     public Map<String, Integer> getTotalValue(List<String> accounts) {
-        Map<String, Integer> accountValues = new HashMap<>(accounts.size());
-
-        for(String account: accounts)
-            accountValues.put(account, 0);
-        for(Transaction transaction: transactions()) {
-            if(!(transaction.to() == null)) {
-                String to = transaction.to().id();
-                String from = null;
-                if(transaction.from() != null)
-                    from = transaction.from().id();
-                if(to != null && accountValues.containsKey(to))
-                    accountValues.put(to, accountValues.get(to) + getTransactionValue(transaction, to));
-                if(from != null && accountValues.containsKey(from))
-                    accountValues.put(from, accountValues.get(from) + getTransactionValue(transaction, from));
-            }
-        }
-
-        return accountValues;
+        return accounts.stream().collect(Collectors.toMap(
+                Function.identity(),
+                this::getBalance
+        ));
     }
+
     @Override
     public List<Account> getAll() {
-        return new ArrayList<>(accounts().values());
+        return ledger.getCommands().stream()
+                .filter(CreateAccountCommand.class::isInstance)
+                .map(CreateAccountCommand.class::cast)
+                .map(accountCommand -> new Account(accountCommand.accountId(), accountCommand.userId()))
+                .toList();
     }
 
 }

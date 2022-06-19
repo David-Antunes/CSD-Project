@@ -1,9 +1,9 @@
 package com.csd.bftsmart.application.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
-public record User(Id id, ArrayList<Account> accounts) implements Serializable {
+public record User(Id id, List<Account> accounts) implements Serializable {
     public record Id(String email, String base64pk) implements Comparable<User.Id>, Serializable {
         @Override
         public int compareTo(Id id) {

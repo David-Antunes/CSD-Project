@@ -25,7 +25,7 @@ public class LedgerController {
     @GetMapping()
     public LedgerResponse getLedger() {
         var ledger = new GetLedgerQuery().execute(pipeline);
-        return new LedgerResponse(ledger.getUsers(), ledger.getAccounts(), ledger.getTransactions(), ledger.getCommands());
+        return new LedgerResponse(ledger.getCommands());
     }
 
 }

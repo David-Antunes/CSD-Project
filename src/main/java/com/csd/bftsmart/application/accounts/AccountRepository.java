@@ -7,11 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface AccountRepository {
-    Account save(Account account);
-
-    void updateBalanceById(String id, int value);
-
-    void sendTransaction(String from, String to, int value);
 
     List<Transaction> getAllTransactions();
 

@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
-public record CreateUserCommand(User.Id userId, String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
+public record CreateUserCommand(User.Id userId,
+                                String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)
@@ -31,13 +31,11 @@ public record CreateUserCommand(User.Id userId, String signBase64) implements Co
 
         @Override
         public Either<Voidy> handle(CreateUserCommand command) {
-            if(!ECDSA.verifySign(command.userId.base64pk(), command.signBase64, command.userId.email()))
+            if (!ECDSA.verifySign(command.userId.base64pk(), command.signBase64, command.userId.email()))
                 return Either.failure(ExceptionCode.INVALID_SIGNATURE);
-            if(users.contains(command.userId.email()))
+            if (users.contains(command.userId.email()))
                 return Either.failure(ExceptionCode.USER_EXISTS);
 
-            User user = new User(command.userId(), new ArrayList<>(2));
-            users.save(user);
             return Either.success();
         }
     }

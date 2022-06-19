@@ -6,7 +6,6 @@ import com.csd.bftsmart.application.CommandTypes;
 import com.csd.bftsmart.application.accounts.AccountRepository;
 import com.csd.bftsmart.application.commands.WriteCommand;
 import com.csd.bftsmart.application.crypto.ECDSA;
-import com.csd.bftsmart.application.entities.Account;
 import com.csd.bftsmart.application.entities.User;
 import com.csd.bftsmart.application.users.UserRepository;
 import com.csd.bftsmart.exceptions.Either;
@@ -17,7 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-public record   CreateAccountCommand(User.Id userId, String accountId, String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
+public record CreateAccountCommand(User.Id userId, String accountId,
+                                   String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)
@@ -34,15 +34,13 @@ public record   CreateAccountCommand(User.Id userId, String accountId, String si
 
         @Override
         public Either<Voidy> handle(CreateAccountCommand command) {
-            if(!ECDSA.verifySign(command.userId().base64pk(), command.signBase64, command.accountId))
+            if (!ECDSA.verifySign(command.userId().base64pk(), command.signBase64, command.accountId))
                 return Either.failure(ExceptionCode.INVALID_SIGNATURE);
-            if(!users.contains(command.userId.email()))
+            if (!users.contains(command.userId.email()))
                 return Either.failure(ExceptionCode.USER_DOES_NOT_EXIST);
-            else if(accounts.contains(command.accountId))
+            else if (accounts.contains(command.accountId))
                 return Either.failure(ExceptionCode.ACCOUNT_EXISTS);
 
-            Account account = new Account(command.accountId(), command.userId());
-            accounts.save(account);
             return Either.success();
         }
     }

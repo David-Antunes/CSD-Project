@@ -36,7 +36,7 @@ public record SendTransactionCommand(String from, String to, int value,
                 return Either.failure(ExceptionCode.INVALID_VALUE);
 
             Account account = accounts.get(command.from);
-            if(account == null)
+            if (account == null)
                 return Either.failure(ExceptionCode.ACCOUNT_DOES_NOT_EXIST);
 
             if (!ECDSA.verifySign(account.userId().base64pk(), command.signBase64, command.from + command.to + command.value))
@@ -48,7 +48,6 @@ public record SendTransactionCommand(String from, String to, int value,
             if (accounts.getBalance(command.from) < command.value)
                 return Either.failure(ExceptionCode.NOT_ENOUGH_BALANCE);
 
-            accounts.sendTransaction(command.from, command.to, command.value);
             return Either.success();
         }
     }
