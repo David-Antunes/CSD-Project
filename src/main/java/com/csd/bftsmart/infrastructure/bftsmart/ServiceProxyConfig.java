@@ -1,6 +1,6 @@
 package com.csd.bftsmart.infrastructure.bftsmart;
 
-import bftsmart.tom.ServiceProxy;
+import bftsmart.tom.AsynchServiceProxy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,7 @@ public class ServiceProxyConfig {
 
     @Bean
     @DependsOn({"replicaRunner"})
-    public ServiceProxy serviceProxy(@Value("${bftsmart.replicaId}") int replicaId) {
-        return new ServiceProxy(replicaId);
+    public AsynchServiceProxy asynchServiceProxy(@Value("${bftsmart.replicaId}") int replicaId) {
+        return new AsynchServiceProxy(replicaId);
     }
 }

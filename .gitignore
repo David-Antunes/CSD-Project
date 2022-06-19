@@ -6,5 +6,4 @@ build/
 
 env/
 venv/
-*.jks
 bin/
