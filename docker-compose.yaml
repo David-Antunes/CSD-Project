@@ -3,6 +3,7 @@ services:
   bftsmart0:
     hostname: bftsmart0
     image: bft
+    build: .
     ports:
       - "8080:8443"
       - "5005:5005"
@@ -16,6 +17,7 @@ services:
   bftsmart1:
     hostname: bftsmart1
     image: bft
+    build: .
     ports:
       - "8081:8443"
     environment:
@@ -28,6 +30,7 @@ services:
   bftsmart2:
     hostname: bftsmart2
     image: bft
+    build: .
     ports:
       - "8082:8443"
     environment:
@@ -40,6 +43,7 @@ services:
   bftsmart3:
     hostname: bftsmart3
     image: bft
+    build: .
     ports:
       - "8083:8443"
     environment:
