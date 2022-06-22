@@ -1,1 +1,5 @@
-rootProject.name = 'bft-smart'
+rootProject.name = 'blockneat'
+include 'server:rest'
+include 'server:application'
+include 'server:infrastructure'
+

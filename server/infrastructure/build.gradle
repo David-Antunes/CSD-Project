@@ -1,0 +1,61 @@
+
+plugins {
+    id 'org.springframework.boot' version '2.7.0'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'application'
+}
+
+application {
+    mainClass = 'com.csd.bftsmart.BftSmartApplication'
+}
+
+group = 'com.csd'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.scijava.org/content/repositories/public/"
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'net.sizovs:pipelinr:0.7'
+    // https://mvnrepository.com/artifact/com.github.bft-smart/library
+    implementation 'com.github.bft-smart:library:1.2'
+
+//    implementation 'io.vavr:vavr:1.0.0-alpha-4'
+
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation 'commons-codec:commons-codec:1.15'
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    implementation 'io.netty:netty-all:4.1.77.Final'
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation project(':server:application')
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+//springBoot {
+//    mainClass = "com.csd.bftsmart.BftSmartApplication"
+//}
+
+apply plugin: 'idea'
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
