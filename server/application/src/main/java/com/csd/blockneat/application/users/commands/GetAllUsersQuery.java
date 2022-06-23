@@ -1,7 +1,7 @@
 package com.csd.blockneat.application.users.commands;
 
 import an.awesome.pipelinr.Command;
-import com.csd.blockneat.application.CommandTypes;
+import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.application.commands.ReadCommand;
 import com.csd.blockneat.application.entities.User;
 import com.csd.blockneat.application.users.UserRepository;

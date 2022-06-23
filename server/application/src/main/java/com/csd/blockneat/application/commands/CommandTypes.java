@@ -1,4 +1,4 @@
-package com.csd.blockneat.application;
+package com.csd.blockneat.application.commands;
 
 public class CommandTypes {
     public static final String APP_READ = "app_read";

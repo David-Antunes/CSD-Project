@@ -4,7 +4,7 @@ import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Pipeline;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
-import com.csd.blockneat.application.CommandTypes;
+import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.infrastructure.persistence.InMemoryLedger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

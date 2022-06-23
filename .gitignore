@@ -7,3 +7,6 @@ build/
 env/
 venv/
 bin/
+*.iml
+
+config/currentView

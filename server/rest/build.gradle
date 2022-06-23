@@ -1,18 +1,16 @@
-
 plugins {
     id 'org.springframework.boot' version '2.7.0'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
-    id 'application'
-}
-
-application {
-    mainClass = 'com.csd.bftsmart.BftSmartApplication'
 }
 
 group = 'com.csd'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
+
+springBoot {
+    mainClass = 'com.csd.blockneat.BlockneatApplication'
+}
 
 repositories {
     mavenCentral()
@@ -24,7 +22,6 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'net.sizovs:pipelinr:0.7'
-//    implementation 'io.vavr:vavr:1.0.0-alpha-4'
 
     // https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
@@ -33,6 +30,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
     implementation project(':server:infrastructure')
     implementation project(':server:application')
 }
@@ -40,9 +38,6 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-//springBoot {
-//    mainClass = "com.csd.bftsmart.BftSmartApplication"
-//}
 
 apply plugin: 'idea'
 

@@ -3,7 +3,7 @@ package com.csd.blockneat.infrastructure.pipelinr;
 import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Pipeline;
 import an.awesome.pipelinr.Pipelinr;
-import com.csd.blockneat.application.CommandTypes;
+import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.application.middlewares.LedgerPersistable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
