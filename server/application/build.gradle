@@ -6,8 +6,8 @@ plugins {
     id 'application'
 }
 
-application {
-    mainClass = 'com.csd.bftsmart.BftSmartApplication'
+springBoot {
+    mainClass = 'com.csd.blockneat.BftSmartApplication'
 }
 
 group = 'com.csd'
@@ -40,9 +40,6 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-//springBoot {
-//    mainClass = "com.csd.bftsmart.BftSmartApplication"
-//}
 
 apply plugin: 'idea'
 
