@@ -1,7 +1,7 @@
 package com.csd.blockneat.application.transactions.commands;
 
 import an.awesome.pipelinr.Command;
-import com.csd.blockneat.application.CommandTypes;
+import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.application.accounts.AccountRepository;
 import com.csd.blockneat.application.commands.ReadCommand;
 import org.springframework.beans.factory.annotation.Autowired;

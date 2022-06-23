@@ -6,10 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-public class BftSmartApplication {
+public class BlockneatApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BftSmartApplication.class, args);
+        SpringApplication.run(BlockneatApplication.class, args);
     }
 
 }

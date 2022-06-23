@@ -2,7 +2,7 @@ package com.csd.blockneat.application.transactions.commands;
 
 import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Voidy;
-import com.csd.blockneat.application.CommandTypes;
+import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.application.accounts.AccountRepository;
 import com.csd.blockneat.application.commands.WriteCommand;
 import com.csd.blockneat.application.crypto.ECDSA;

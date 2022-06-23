@@ -1,4 +1,3 @@
-
 plugins {
     id 'org.springframework.boot' version '2.7.0'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -10,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 springBoot {
-    mainClass = 'com.csd.blockneat.BftSmartApplication'
+    mainClass = 'com.csd.blockneat.BlockneatApplication'
 }
 
 repositories {
@@ -23,7 +22,6 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'net.sizovs:pipelinr:0.7'
-//    implementation 'io.vavr:vavr:1.0.0-alpha-4'
 
     // https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'

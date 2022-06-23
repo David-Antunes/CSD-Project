@@ -5,7 +5,7 @@ import an.awesome.pipelinr.Voidy;
 import com.csd.blockneat.application.commands.WriteCommand;
 import com.csd.blockneat.application.crypto.ECDSA;
 import com.csd.blockneat.application.Either;
-import com.csd.blockneat.application.CommandTypes;
+import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.application.entities.User;
 import com.csd.blockneat.application.users.UserRepository;
 import com.csd.blockneat.application.ExceptionCode;
