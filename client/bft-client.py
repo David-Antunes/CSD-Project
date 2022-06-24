@@ -16,6 +16,7 @@ _ASN1 = OpenSSL.crypto.FILETYPE_ASN1
 _KEYSTORE_FILE = 'users.jks'
 _KEYSTORE_PASS = 'user1'
 _BASE_URL = 'https://172.20.0.2:8443'
+_PROXY_URL = 'https://172.20.0.6:8443'
 _USERS = '/users'
 _ACCOUNTS = "/accounts"
 _TRANSACTIONS = "/transactions"
@@ -153,7 +154,7 @@ def loadMoney(to, value):
 
 def send_transaction(accountId, to, value):
     json_body = {"from": accountId, "to": to, "value": value}
-    generatePostRequest(_BASE_URL + _TRANSACTIONS, accountId + to + value, json_body)
+    generatePostRequest(_PROXY_URL + "/proxy", accountId + to + value, json_body)
 
 
 def balance(accountId):
@@ -322,3 +323,6 @@ while True:
     command = input(current_prompt + "> ")
     tokens = command.split(" ")
     processToken(tokens)
+
+if __name__ == "__main__":
+    pass
