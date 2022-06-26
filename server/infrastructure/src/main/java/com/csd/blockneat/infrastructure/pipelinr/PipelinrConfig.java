@@ -66,8 +66,10 @@ public class PipelinrConfig {
 
         @Bean
         @Qualifier(CONTROLLER_PIPELINE)
-        Pipeline controllerBftSmartReadWritePipeline(@Qualifier("bftSmartReadWritePipeline") Pipeline pipeline) {
-            return pipeline;
+        Pipeline controllerBftSmartReadWritePipeline(@Qualifier(BFT_SMART_APP_READ) ObjectProvider<Command.Handler> readCommandHandlers,
+                                                     @Qualifier(BFT_SMART_APP_WRITE) ObjectProvider<Command.Handler> writeCommandHandlers) {
+            return new Pipelinr()
+                    .with(() -> Stream.concat(readCommandHandlers.stream(), writeCommandHandlers.stream()));
         }
     }
 
