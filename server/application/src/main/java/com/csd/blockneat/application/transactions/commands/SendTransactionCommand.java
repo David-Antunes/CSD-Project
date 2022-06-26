@@ -35,7 +35,7 @@ public record SendTransactionCommand(String from, String to, int value,
             if (command.value < 0)
                 return Either.failure(ExceptionCode.INVALID_VALUE);
 
-            Account account = accounts.get(command.from);
+            Account account = accounts.getUnconfirmed(command.from);
             if (account == null)
                 return Either.failure(ExceptionCode.ACCOUNT_DOES_NOT_EXIST);
 
@@ -43,9 +43,9 @@ public record SendTransactionCommand(String from, String to, int value,
                 return Either.failure(ExceptionCode.INVALID_SIGNATURE);
             if (command.to.equals(command.from))
                 return Either.failure(ExceptionCode.SAME_ACCOUNT);
-            if (!accounts.contains(command.to))
+            if (!accounts.containsUnconfirmed(command.to))
                 return Either.failure(ExceptionCode.ACCOUNT_DOES_NOT_EXIST);
-            if (accounts.getBalance(command.from) < command.value)
+            if (accounts.getUnconfirmedBalance(command.from) < command.value)
                 return Either.failure(ExceptionCode.NOT_ENOUGH_BALANCE);
 
             return Either.success();

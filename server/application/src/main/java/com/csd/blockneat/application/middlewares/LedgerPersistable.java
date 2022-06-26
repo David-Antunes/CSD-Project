@@ -21,9 +21,9 @@ public class LedgerPersistable implements Command.Middleware {
     @Override
     public <R, C extends Command<R>> R invoke(C command, Next<R> next) {
         R response = next.invoke();
-        if (command instanceof WriteCommand &&
+        if (command instanceof WriteCommand writeCommand &&
                 ((Either<?>) response).left() == ExceptionCode.SUCCESS) {
-            ledger.append((WriteCommand) command);
+            ledger.append(writeCommand);
         }
         return response;
     }
