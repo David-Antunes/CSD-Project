@@ -2,7 +2,6 @@ package com.csd.blockneat.client;
 
 import com.csd.blockneat.application.entities.Account;
 import com.csd.blockneat.application.entities.Transaction;
-import com.csd.blockneat.rest.responses.LedgerResponse;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -16,9 +15,9 @@ public interface BlockNeatAPI {
 
     String getAllUsers() throws IOException, InterruptedException;
 
-    void createAccount(String accountId) throws SignatureException, InvalidKeyException;
+    String createAccount(String accountId) throws SignatureException, InvalidKeyException, IOException, InterruptedException;
 
-    List<Account> getAllAccounts();
+    String getAllAccounts() throws IOException, InterruptedException;
 
     void getBalance(String accountId);
 
@@ -32,7 +31,7 @@ public interface BlockNeatAPI {
 
     int getGlobalValue();
 
-    List<Transaction> getAllTransactions();
+    String getAllTransactions() throws IOException, InterruptedException;
 
-    LedgerResponse getLedger();
+    String getLedger() throws IOException, InterruptedException;
 }

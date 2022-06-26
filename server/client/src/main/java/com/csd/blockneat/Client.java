@@ -21,6 +21,8 @@ public class Client {
         BlockNeatAPI bna = new BlockNeatAPIClient(user, url);
         System.out.println(bna.createUser());
         System.out.println(bna.getAllUsers());
+        System.out.println(bna.createAccount("account1"));
+        System.out.println(bna.getAllAccounts());
     }
 
 }

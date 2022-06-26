@@ -3,8 +3,8 @@ package com.csd.blockneat.client;
 import com.csd.blockneat.application.entities.Account;
 import com.csd.blockneat.application.entities.Transaction;
 import com.csd.blockneat.application.entities.User;
+import com.csd.blockneat.rest.requests.AccountRequest;
 import com.csd.blockneat.rest.requests.UserRequest;
-import com.csd.blockneat.rest.responses.LedgerResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,9 +18,12 @@ import java.security.SignatureException;
 import java.util.List;
 import java.util.Map;
 
-public class BlockNeatAPIClient implements BlockNeatAPI{
+public class BlockNeatAPIClient implements BlockNeatAPI {
 
     public static final String USERS = "/users";
+    public static final String ACCOUNTS = "/accounts";
+    public static final String TRANSACTIONS = "/transactions";
+    public static final String LEDGER = "/ledger";
     private final InternalUser internalUser;
     String endpoint;
 
@@ -34,7 +37,7 @@ public class BlockNeatAPIClient implements BlockNeatAPI{
         this.httpClient = HttpClient.newHttpClient();
     }
 
-    private String toJson(Object object)   {
+    private String toJson(Object object) {
         try {
             return om.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -63,10 +66,10 @@ public class BlockNeatAPIClient implements BlockNeatAPI{
                 .GET()
                 .build();
     }
+
     @Override
     public String createUser() throws IOException, InterruptedException, SignatureException, InvalidKeyException {
         String signature = signBody(internalUser.getUsername());
-        System.out.println(signature);
         UserRequest body = new UserRequest(new User.Id(internalUser.getUsername(), internalUser.getPublicKey()));
 
         HttpRequest httpRequest = generatePostRequest(USERS, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
@@ -82,13 +85,22 @@ public class BlockNeatAPIClient implements BlockNeatAPI{
     }
 
     @Override
-    public void createAccount(String accountId) throws SignatureException, InvalidKeyException {
+    public String createAccount(String accountId) throws SignatureException, InvalidKeyException, IOException, InterruptedException {
+        String signature = signBody(accountId);
+        AccountRequest body = new AccountRequest(new User.Id(internalUser.getUsername(), internalUser.getPublicKey()), accountId);
 
+        HttpRequest httpRequest = generatePostRequest(ACCOUNTS, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
-    public List<Account> getAllAccounts() {
-        return null;
+    public String getAllAccounts() throws IOException, InterruptedException {
+
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest("/accounts"), HttpResponse.BodyHandlers.ofString());
+        return response.body();
+
     }
 
     @Override
@@ -122,12 +134,15 @@ public class BlockNeatAPIClient implements BlockNeatAPI{
     }
 
     @Override
-    public List<Transaction> getAllTransactions() {
-        return null;
+    public String getAllTransactions() throws IOException, InterruptedException {
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(TRANSACTIONS), HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
-    public LedgerResponse getLedger() {
-        return null;
+    public String getLedger() throws IOException, InterruptedException {
+
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(LEDGER), HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 }
