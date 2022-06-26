@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -37,6 +38,7 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
     public InMemoryLedger() {
         commands = new ConcurrentLinkedQueue<>();
         blocks = new ArrayList<>();
+        blocks.add(new ValidatedBlock(new Block(0, 0, "", new ArrayList<>()), ""));
     }
 
     @Override
@@ -61,7 +63,7 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
     public Block getNextBlock() {
         List<WriteCommand> transactions = commands.stream()
                 .limit(16)
-                .toList();
+                .collect(Collectors.toList());
         if (transactions.size() != 16) {
             return null;
         }

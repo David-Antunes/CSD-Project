@@ -9,7 +9,10 @@ import com.csd.blockneat.application.mining.commands.ProposeBlockCommand;
 import com.csd.blockneat.infrastructure.pipelinr.PipelinrConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.*;
 
 @RestController
 @RequestMapping("/mining")
@@ -23,12 +26,29 @@ public class MiningController {
     }
 
     @GetMapping
-    public Either<Block> getBlockToMine() {
-        return new GetBlockToMineQuery().execute(pipeline);
+    public byte[] getBlockToMine() {
+        try (var byteOut = new ByteArrayOutputStream();
+             var objOut = new ObjectOutputStream(byteOut)) {
+
+            objOut.writeObject(new GetBlockToMineQuery().execute(pipeline).right());
+
+            objOut.flush();
+            byteOut.flush();
+            return byteOut.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PostMapping
-    public void proposeBlock(@RequestBody ValidatedBlock block) {
+    public void proposeBlock(@RequestBody byte[] serializedBlock) {
+        ValidatedBlock block;
+        try (var byteIn = new ByteArrayInputStream(serializedBlock);
+             var objIn = new ObjectInputStream(byteIn)) {
+            block = (ValidatedBlock) objIn.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         new ProposeBlockCommand(block).execute(pipeline);
     }
 }
