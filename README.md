@@ -54,12 +54,12 @@ docker run -it --network csdproject_bft bft-client
 
 ## Client
 
-The client contains two states. The initial state is to decide if you want to login to a user, fill the application with some data or do a benchmark.
+The client contains two states. The initial state is to decide if you want to login to a internalUser, fill the application with some data or do a benchmark.
 
 The benchmark command will generate the users, accounts and generate 10000 transactions on 4 threads
 
 ```
-lu <userId> <password> ---- Start user session
+lu <userId> <password> ---- Start internalUser session
 fill ---- Fills the ledger with data
 benchmark ---- Starts a pull of threads and generates transactions.
 help
@@ -68,15 +68,15 @@ exit
 
 On the second state you have access to 4 users:
 
-user: user1 password: user1
+internalUser: user1 password: user1
 
-user: user2 password: user2
+internalUser: user2 password: user2
 
-user: user3 password: user3
+internalUser: user3 password: user3
 
-user: user4 password: user4
+internalUser: user4 password: user4
 
-to login a user you have to run:
+to login a internalUser you have to run:
 
 ```
 lu user1 user1
@@ -94,8 +94,8 @@ In this state you will have access to the following commands:
 
 ```
 ca <accountId> ---- create account
-cu ---- create current user in the system
-chu <userId> <password> ---- Change to another user
+cu ---- create current internalUser in the system
+chu <userId> <password> ---- Change to another internalUser
 lu ---- list all users
 lm <accountId> <value> ---- Load Money
 st <from_accountId> <to_accountId> <value> ---- Send Transaction
@@ -109,10 +109,10 @@ exit
 user1>
 ```
 
-cu — registers the current logged in user in the system
+cu — registers the current logged in internalUser in the system
 
 ca — creates a new account on user1
 
-chu — changes to a new user
+chu — changes to a new internalUser
 
 st — sends a transaction from the accountId to another accountId registered in the system with the given value

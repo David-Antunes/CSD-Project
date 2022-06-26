@@ -107,6 +107,7 @@ def benchmark():
 
 def generatePostRequest(url, sign, json_body):
     response = base64.b64encode(bytes(OpenSSL.crypto.sign(priv_key, sign, "sha512"))).decode('utf-8')
+    print(response)
     r = requests.post(url, json=json_body, headers={'signature': str(response)}, verify=False)
     if r.status_code != 200:
         print(str(r.content))
