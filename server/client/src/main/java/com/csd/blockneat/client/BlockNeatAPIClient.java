@@ -1,7 +1,6 @@
 package com.csd.blockneat.client;
 
 import com.csd.blockneat.application.entities.Account;
-import com.csd.blockneat.application.entities.Transaction;
 import com.csd.blockneat.application.entities.User;
 import com.csd.blockneat.rest.requests.AccountRequest;
 import com.csd.blockneat.rest.requests.UserRequest;
@@ -16,13 +15,16 @@ import java.net.http.HttpResponse;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.List;
-import java.util.Map;
 
 public class BlockNeatAPIClient implements BlockNeatAPI {
 
     public static final String USERS = "/users";
     public static final String ACCOUNTS = "/accounts";
+    public static final String BALANCE = ACCOUNTS + "/balance/";
     public static final String TRANSACTIONS = "/transactions";
+    public static final String TOTAL_VALUE = TRANSACTIONS + "/total";
+    public static final String GLOBAL_VALUE = TRANSACTIONS + "/global";
+    public static final String EXTRACT = TRANSACTIONS + "/extract/";
     public static final String LEDGER = "/ledger";
     private final InternalUser internalUser;
     String endpoint;
@@ -97,15 +99,15 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
 
     @Override
     public String getAllAccounts() throws IOException, InterruptedException {
-
         HttpResponse<String> response = httpClient.send(generateEmptyGetRequest("/accounts"), HttpResponse.BodyHandlers.ofString());
         return response.body();
 
     }
 
     @Override
-    public void getBalance(String accountId) {
-
+    public String getBalance(String accountId) throws IOException, InterruptedException {
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(BALANCE + accountId), HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
@@ -119,18 +121,21 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     }
 
     @Override
-    public List<Transaction> getExtract(String accountId) {
-        return null;
+    public String getExtract(String accountId) throws IOException, InterruptedException {
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(EXTRACT + accountId), HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
-    public Map<String, Integer> getTotalValue(List<Account> accounts) {
-        return null;
+    public String getTotalValue(List<Account> accounts) throws IOException, InterruptedException {
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(TOTAL_VALUE), HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
-    public int getGlobalValue() {
-        return 0;
+    public String getGlobalValue() throws IOException, InterruptedException {
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(GLOBAL_VALUE), HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
