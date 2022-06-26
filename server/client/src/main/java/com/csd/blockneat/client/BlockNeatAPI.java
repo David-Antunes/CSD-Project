@@ -25,7 +25,7 @@ public interface BlockNeatAPI {
 
     String getExtract(String accountId) throws IOException, InterruptedException;
 
-    String getTotalValue(List<Account> accounts) throws IOException, InterruptedException;
+    String getTotalValue(List<String> accounts) throws IOException, InterruptedException;
 
     String getGlobalValue() throws IOException, InterruptedException;
 

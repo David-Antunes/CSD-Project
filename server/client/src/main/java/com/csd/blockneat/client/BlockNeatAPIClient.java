@@ -56,8 +56,9 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     private HttpRequest generatePostRequest(String path, HttpRequest.BodyPublisher body, String signature) {
         return HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + path))
-                .headers("Content-Type", "application/json")
-                .headers("signature", signature)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("signature", signature)
                 .POST(body)
                 .build();
     }
@@ -65,10 +66,20 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     private HttpRequest generateEmptyGetRequest(String path) {
         return HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + path))
-                .headers("Content-Type", "application/json")
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .GET()
                 .build();
     }
+    private HttpRequest generateGetRequest(String path, String body) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(endpoint + path))
+                .header("Content-Type", "application/json")
+                .method(body, HttpRequest.BodyPublishers.ofString(body))
+                .GET()
+                .build();
+    }
+
 
     @Override
     public String createUser() throws IOException, InterruptedException, SignatureException, InvalidKeyException {
@@ -140,8 +151,10 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     }
 
     @Override
-    public String getTotalValue(List<Account> accounts) throws IOException, InterruptedException {
-        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(TOTAL_VALUE), HttpResponse.BodyHandlers.ofString());
+    public String getTotalValue(List<String> accounts) throws IOException, InterruptedException {
+        ObjectMapper om = new ObjectMapper();
+        String body = om.writeValueAsString(accounts);
+        HttpResponse<String> response = httpClient.send(generateGetRequest(TOTAL_VALUE, body), HttpResponse.BodyHandlers.ofString());
         return response.body();
     }
 
