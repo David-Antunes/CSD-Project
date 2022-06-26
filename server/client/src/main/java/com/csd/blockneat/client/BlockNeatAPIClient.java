@@ -175,4 +175,26 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
         HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(LEDGER), HttpResponse.BodyHandlers.ofString());
         return response.body();
     }
+
+    @Override
+    public byte[] getNextBlock() throws IOException, InterruptedException {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint + "/mining"))
+                .GET()
+                .build();
+
+        var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+        return response.body();
+    }
+
+    @Override
+    public void proposeBlock(byte[] block) throws IOException, InterruptedException {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint + "/mining"))
+                .headers("Content-Type", "application/octet-stream")
+                .POST(HttpRequest.BodyPublishers.ofByteArray(block))
+                .build();
+
+        httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+    }
 }

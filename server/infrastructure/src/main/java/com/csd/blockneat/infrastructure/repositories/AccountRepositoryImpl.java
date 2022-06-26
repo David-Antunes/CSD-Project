@@ -2,6 +2,7 @@ package com.csd.blockneat.infrastructure.repositories;
 
 import com.csd.blockneat.application.accounts.AccountRepository;
 import com.csd.blockneat.application.accounts.commands.CreateAccountCommand;
+import com.csd.blockneat.application.commands.WriteCommand;
 import com.csd.blockneat.application.entities.Account;
 import com.csd.blockneat.application.entities.Transaction;
 import com.csd.blockneat.application.transactions.commands.LoadMoneyCommand;
@@ -28,8 +29,17 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public boolean contains(String accountId) {
-        return ledger.getCommands().stream()
+    public boolean containsUnconfirmed(String accountId) {
+        return containsWith(accountId, ledger.getUnconfirmedCommandsStream());
+    }
+
+    @Override
+    public boolean containsConfirmed(String accountId) {
+        return containsWith(accountId, ledger.getConfirmedCommandsStream());
+    }
+
+    private boolean containsWith(String accountId, Stream<WriteCommand> commandsStream) {
+        return commandsStream
                 .filter(CreateAccountCommand.class::isInstance)
                 .map(CreateAccountCommand.class::cast)
                 .map(CreateAccountCommand::accountId)
@@ -37,8 +47,17 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public Account get(String accountId) {
-        var accounts = ledger.getCommands().stream()
+    public Account getConfirmed(String accountId) {
+        return getAccountWith(accountId, ledger.getConfirmedCommandsStream());
+    }
+
+    @Override
+    public Account getUnconfirmed(String accountId) {
+        return getAccountWith(accountId, ledger.getUnconfirmedCommandsStream());
+    }
+
+    private Account getAccountWith(String accountId, Stream<WriteCommand> commandsStream) {
+        var accounts = commandsStream
                 .filter(CreateAccountCommand.class::isInstance)
                 .map(CreateAccountCommand.class::cast)
                 .filter(accountCommand -> accountCommand.accountId().equals(accountId))
@@ -53,20 +72,28 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public List<Transaction> getAllTransactions() {
-        return getTransactionStream()
+        return getConfirmedTransactionStream()
                 .toList();
     }
 
-    private Stream<Transaction> getTransactionStream() {
+    private Stream<Transaction> getUnconfirmedTransactionStream() {
+        return getTransactionStream(ledger.getUnconfirmedCommandsStream(), this::getUnconfirmed);
+    }
+
+    private Stream<Transaction> getConfirmedTransactionStream() {
+        return getTransactionStream(ledger.getConfirmedCommandsStream(), this::getConfirmed);
+    }
+
+    private Stream<Transaction> getTransactionStream(Stream<WriteCommand> commandsStream, Function<String, Account> getAccount) {
         AtomicInteger id = new AtomicInteger(0); //TODO
-        return ledger.getCommands().stream()
+        return commandsStream
                 .filter(command -> command instanceof LoadMoneyCommand || command instanceof SendTransactionCommand)
                 .map(command -> {
                     if (command instanceof LoadMoneyCommand loadMoneyCommand) {
-                        return new Transaction(id.incrementAndGet(), null, get(loadMoneyCommand.accountId()), loadMoneyCommand.value());
+                        return new Transaction(id.incrementAndGet(), null, getAccount.apply(loadMoneyCommand.accountId()), loadMoneyCommand.value());
                     }
-                    Account from = get(((SendTransactionCommand) command).from());
-                    Account to = get(((SendTransactionCommand) command).to());
+                    Account from = getAccount.apply(((SendTransactionCommand) command).from());
+                    Account to = getAccount.apply(((SendTransactionCommand) command).to());
                     int value = ((SendTransactionCommand) command).value();
                     return new Transaction(id.incrementAndGet(), from, to, value);
                 });
@@ -74,9 +101,9 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public List<Transaction> getExtract(String accountId) {
-        return getTransactionStream()
-                .filter(transaction ->
-                        checkTransactionForAccount(transaction.from(), accountId) || checkTransactionForAccount(transaction.to(), accountId))
+        return getConfirmedTransactionStream()
+                .filter(transaction -> checkTransactionForAccount(transaction.from(), accountId) ||
+                        checkTransactionForAccount(transaction.to(), accountId))
                 .toList();
     }
 
@@ -85,8 +112,16 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public int getBalance(String accountId) {
-        return getTransactionStream()
+    public int getUnconfirmedBalance(String accountId) {
+        return getBalanceWith(accountId, getUnconfirmedTransactionStream());
+    }
+
+    public int getConfirmedBalance(String accountId) {
+        return getBalanceWith(accountId, getConfirmedTransactionStream());
+    }
+
+    private int getBalanceWith(String accountId, Stream<Transaction> transactionStream) {
+        return transactionStream
                 .map(transaction -> getTransactionValue(transaction, accountId))
                 .reduce(Integer::sum)
                 .orElse(0);
@@ -106,7 +141,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public int getGlobalValue() {
-        return getTransactionStream()
+        return getConfirmedTransactionStream()
                 .filter(transaction -> transaction.from() == null)
                 .map(Transaction::value)
                 .reduce(Integer::sum)
@@ -117,13 +152,13 @@ public class AccountRepositoryImpl implements AccountRepository {
     public Map<String, Integer> getTotalValue(List<String> accounts) {
         return accounts.stream().collect(Collectors.toMap(
                 Function.identity(),
-                this::getBalance
+                this::getConfirmedBalance
         ));
     }
 
     @Override
     public List<Account> getAll() {
-        return ledger.getCommands().stream()
+        return ledger.getConfirmedCommandsStream()
                 .filter(CreateAccountCommand.class::isInstance)
                 .map(CreateAccountCommand.class::cast)
                 .map(accountCommand -> new Account(accountCommand.accountId(), accountCommand.userId()))

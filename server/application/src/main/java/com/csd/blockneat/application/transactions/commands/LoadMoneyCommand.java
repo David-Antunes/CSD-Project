@@ -31,7 +31,7 @@ public record LoadMoneyCommand(String accountId, int value,
 
         @Override
         public Either<Voidy> handle(LoadMoneyCommand command) {
-            Account account = accounts.get(command.accountId);
+            Account account = accounts.getUnconfirmed(command.accountId);
             if (account == null)
                 return Either.failure(ExceptionCode.ACCOUNT_DOES_NOT_EXIST);
             if (!ECDSA.verifySign(account.userId().base64pk(), command.signBase64, command.accountId + command.value))

@@ -22,7 +22,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     public boolean contains(String userId) {
-        return ledger.getCommands().stream()
+        return ledger.getUnconfirmedCommandsStream()
                 .filter(CreateUserCommand.class::isInstance)
                 .map(CreateUserCommand.class::cast)
                 .map(CreateUserCommand::userId)
@@ -32,15 +32,17 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAll() {
+        var createAccountCommands = ledger.getUnconfirmedCommandsStream()
+                .filter(CreateAccountCommand.class::isInstance)
+                .map(CreateAccountCommand.class::cast)
+                .toList();
 
-        return ledger.getCommands().stream()
+        return ledger.getUnconfirmedCommandsStream()
                 .filter(CreateUserCommand.class::isInstance)
                 .map(CreateUserCommand.class::cast)
                 .map(userCommand -> {
                     var id = userCommand.userId();
-                    var userAccounts = ledger.getCommands().stream()
-                            .filter(CreateAccountCommand.class::isInstance)
-                            .map(CreateAccountCommand.class::cast)
+                    var userAccounts = createAccountCommands.stream()
                             .filter(accountCommand -> accountCommand.userId().equals(id))
                             .map(accountCommand -> new Account(accountCommand.accountId(), id))
                             .toList();

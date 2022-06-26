@@ -4,6 +4,7 @@ import com.csd.blockneat.client.BlockNeatAPI;
 import com.csd.blockneat.client.BlockNeatAPIClient;
 import com.csd.blockneat.client.ECDSASignature;
 import com.csd.blockneat.client.InternalUser;
+import com.csd.blockneat.miner.Miner;
 
 import java.io.IOException;
 import java.security.*;
@@ -12,11 +13,15 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.security.cert.X509Certificate;
+import java.util.concurrent.Executor;
 
 public class Client {
     public static final String KEY_STORE_PATH = "config/users.pkcs12";
     public static final String KEY_STORE_PASSWORD = "users";
     static ECDSASignature ec;
+
+    static Miner miner;
 
 
     private static void changeUser(String filename, String password, String username, String userPassword) {
@@ -36,66 +41,51 @@ public class Client {
 
     private static void handleCommand(String[] command, BlockNeatAPI bna)  {
         try {
-
-        switch (command[0]) {
-            case "":
-            case "exit":
-                break;
-            case "cu":
-                System.out.println(bna.createUser());
-                break;
-            case "ca":
-                System.out.println(bna.createAccount(command[1]));
-                break;
-            case "lm":
-                System.out.println(bna.loadMoney(command[1], Integer.parseInt(command[2])));
-                break;
-            case "st":
-                System.out.println(bna.sendTransaction(command[1], command[2], Integer.parseInt(command[3])));
-                break;
-            case "gtv":
-                List<String> accounts = new LinkedList<>(Arrays.asList(command).subList(1, command.length));
-                System.out.println(bna.getTotalValue(accounts));
-                break;
-            case "gb":
-                System.out.println(bna.getBalance(command[1]));
-                break;
-            case "ge":
-                System.out.println(bna.getExtract(command[1]));
-                break;
-            case "chu":
-                changeUser("config/users.pkcs12", "users", command[1], command[2]);
-                break;
-            case "ggv":
-                System.out.println(bna.getGlobalValue());
-                break;
-            case "gl":
-                System.out.println(bna.getLedger());
-            case "help":
-            case "h":
-                help();
-                break;
-            default:
-                System.out.println("Invalid command");
-        }
+            switch (command[0]) {
+                case "exit" -> {}
+                case "cu" -> System.out.println(bna.createUser());
+                case "ca" -> System.out.println(bna.createAccount(command[1]));
+                case "lm" -> System.out.println(bna.loadMoney(command[1], Integer.parseInt(command[2])));
+                case "st" ->
+                        System.out.println(bna.sendTransaction(command[1], command[2], Integer.parseInt(command[3])));
+                case "gtv" -> {
+                    List<String> accounts = new LinkedList<>(Arrays.asList(command).subList(1, command.length));
+                    System.out.println(bna.getTotalValue(accounts));
+                }
+                case "gb" -> System.out.println(bna.getBalance(command[1]));
+                case "ge" -> System.out.println(bna.getExtract(command[1]));
+                case "chu" -> changeUser("config/users.pkcs12", "users", command[1], command[2]);
+                case "ggv" -> System.out.println(bna.getGlobalValue());
+                case "gl" -> System.out.println(bna.getLedger());
+                case "help", "h" -> help();
+                case "mine" -> mine();
+                default -> System.out.println("Invalid command");
+            }
         } catch(Exception e) {
             e.printStackTrace();
             System.out.println("Invalid command arguments");
         }
     }
+
+    private static void mine() {
+        miner.toggle();
+    }
+
     private static void help() {
-        System.out.println("\nca <accountId> ---- create account");
-        System.out.println("cu ---- create current user in the system");
-        System.out.println("chu <userId> <password> ---- Change to another user");
-        System.out.println("lm <accountId> <value> ---- Load Money");
-        System.out.println("st <from_accountId> <to_accountId> <value> ---- Send Transaction");
-        System.out.println("gb <accountId> ---- get Balance");
-        System.out.println("ge <accountId> ---- get Extract");
-        System.out.println("ggv ---- get global Value");
-        System.out.println("gtv <accountId_1> <accountId_2> ... <accountId_N> ---- get total value");
-        System.out.println("gl ---- get ledger");
-        System.out.println("help");
-        System.out.println("exit");
+        System.out.println("""
+                           
+                           ca <accountId> ---- create account
+                           cu ---- create current user in the system
+                           chu <userId> <password> ---- Change to another user
+                           lm <accountId> <value> ---- Load Money
+                           st <from_accountId> <to_accountId> <value> ---- Send Transaction
+                           gb <accountId> ---- get Balance
+                           ge <accountId> ---- get Extract
+                           ggv ---- get global Value
+                           gtv <accountId_1> <accountId_2> ... <accountId_N> ---- get total value
+                           gl ---- get ledger
+                           help
+                           exit""");
     }
     public static void main(String[] args) {
 
@@ -106,6 +96,9 @@ public class Client {
         changeUser(KEY_STORE_PATH, KEY_STORE_PASSWORD, "user1", "user1");
 
         BlockNeatAPI bna = new BlockNeatAPIClient(user, url);
+
+        var minerUser = new InternalUser("user1", ec);
+        miner = new Miner(new BlockNeatAPIClient(minerUser, url), minerUser);
 
         Scanner in = new Scanner(System.in);
         String[] command;

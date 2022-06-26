@@ -18,7 +18,9 @@ public class HandleWebExceptions {
             case INVALID_USER -> throw new ResponseStatusException(BAD_REQUEST, "Invalid user.");
             case INVALID_SIGNATURE -> throw new ResponseStatusException(BAD_REQUEST, "Invalid digital signature.");
             case ACCOUNT_DOES_NOT_EXIST -> throw new ResponseStatusException(BAD_REQUEST, "Account does not exist.");
-            case ACCOUNT_DOES_NOT_BELONG_TO_USER -> throw new ResponseStatusException(BAD_REQUEST, "Account does not belong to user");
+            case ACCOUNT_DOES_NOT_BELONG_TO_USER -> throw new ResponseStatusException(BAD_REQUEST, "Account does not belong to user.");
+            case NOT_ENOUGH_TRANSACTIONS -> throw new ResponseStatusException(BAD_REQUEST, "There are not enough transactions to fill a block.");
+            case INVALID_BLOCK -> throw new ResponseStatusException(BAD_REQUEST, "Invalid proposed block.");
         };
     }
 }

@@ -25,9 +25,9 @@ public record GetBalanceQuery(String accountId) implements Command<Either<Intege
         }
 
         public Either<Integer> handle(GetBalanceQuery command) {
-            if(!accounts.contains(command.accountId))
+            if(!accounts.containsConfirmed(command.accountId))
                 return Either.failure(ExceptionCode.ACCOUNT_EXISTS);
-            return Either.success(accounts.getBalance(command.accountId));
+            return Either.success(accounts.getConfirmedBalance(command.accountId));
         }
     }
 }

@@ -32,4 +32,8 @@ public interface BlockNeatAPI {
     String getAllTransactions() throws IOException, InterruptedException;
 
     String getLedger() throws IOException, InterruptedException;
+
+    byte[] getNextBlock() throws IOException, InterruptedException;
+
+    void proposeBlock(byte[] block) throws IOException, InterruptedException;
 }
