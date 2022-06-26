@@ -107,6 +107,7 @@ def benchmark():
 
 def generatePostRequest(url, sign, json_body):
     response = base64.b64encode(bytes(OpenSSL.crypto.sign(priv_key, sign, "sha512"))).decode('utf-8')
+    print(response)
     r = requests.post(url, json=json_body, headers={'signature': str(response)}, verify=False)
     if r.status_code != 200:
         print(str(r.content))
@@ -128,7 +129,7 @@ def load_user(userId, password):
         pkey.decrypt(password)
         priv_key = OpenSSL.crypto.load_privatekey(_ASN1, pkey.pkey)
         cert = OpenSSL.crypto.load_certificate(_ASN1, pkey.cert_chain[0][1])
-        pub_key = base64.b64encode(OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)).decode('utf-8')
+        pub_key = base64.b64encode(OpenSSL.crypto.dump_publickey(OpenSSL.crypto.FILETYPE_ASN1, cert.get_pubkey())).decode('utf-8')
         current_prompt = userId
         current_user = userId
         return True
@@ -154,7 +155,8 @@ def loadMoney(to, value):
 
 def send_transaction(accountId, to, value):
     json_body = {"from": accountId, "to": to, "value": value}
-    generatePostRequest(_PROXY_URL + "/proxy", accountId + to + value, json_body)
+    # generatePostRequest(_PROXY_URL + "/proxy", accountId + to + value, json_body)
+    generatePostRequest(_BASE_URL + _TRANSACTIONS, accountId + to + value, json_body)
 
 
 def balance(accountId):

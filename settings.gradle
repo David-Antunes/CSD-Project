@@ -4,3 +4,6 @@ include 'server:application'
 include 'server:infrastructure'
 include 'server:sgx'
 include 'server:sgx-proxy'
+include 'server:benchmark'
+include 'server:client'
+
