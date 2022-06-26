@@ -12,7 +12,7 @@ public interface AccountRepository {
 
     List<Transaction> getExtract(String accountId);
 
-    int getBalance(String accountId);
+    int getUnconfirmedBalance(String accountId);
 
     int getGlobalValue();
 
@@ -20,7 +20,13 @@ public interface AccountRepository {
 
     List<Account> getAll();
 
-    boolean contains(String accountId);
+    boolean containsUnconfirmed(String accountId);
 
-    Account get(String accountId);
+    boolean containsConfirmed(String accountId);
+
+    Account getConfirmed(String accountId);
+
+    Account getUnconfirmed(String accountId);
+
+    int getConfirmedBalance(String accountId);
 }

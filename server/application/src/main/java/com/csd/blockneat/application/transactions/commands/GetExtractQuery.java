@@ -29,7 +29,7 @@ public record GetExtractQuery(String accountId) implements Command<Either<List<T
 
         public Either<List<Transaction>> handle(GetExtractQuery command) {
 
-            if(!accounts.contains(command.accountId))
+            if(!accounts.containsConfirmed(command.accountId))
                 return Either.failure(ExceptionCode.ACCOUNT_EXISTS);
 
             return Either.success(accounts.getExtract(command.accountId));

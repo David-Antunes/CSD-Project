@@ -38,7 +38,7 @@ public record CreateAccountCommand(User.Id userId, String accountId,
                 return Either.failure(ExceptionCode.INVALID_SIGNATURE);
             if (!users.contains(command.userId.email()))
                 return Either.failure(ExceptionCode.USER_DOES_NOT_EXIST);
-            else if (accounts.contains(command.accountId))
+            else if (accounts.containsUnconfirmed(command.accountId))
                 return Either.failure(ExceptionCode.ACCOUNT_EXISTS);
 
             return Either.success();
