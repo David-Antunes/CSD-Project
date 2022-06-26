@@ -14,9 +14,9 @@ public interface BlockNeatAPI {
 
     String createUser() throws IOException, InterruptedException, SignatureException, InvalidKeyException;
 
-    List<InternalUser> getAllUsers();
+    String getAllUsers() throws IOException, InterruptedException;
 
-    void createAccount(String accountId);
+    void createAccount(String accountId) throws SignatureException, InvalidKeyException;
 
     List<Account> getAllAccounts();
 

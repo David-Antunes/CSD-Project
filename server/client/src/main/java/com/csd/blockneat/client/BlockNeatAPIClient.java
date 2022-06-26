@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class BlockNeatAPIClient implements BlockNeatAPI{
 
+    public static final String USERS = "/users";
     private final InternalUser internalUser;
     String endpoint;
 
@@ -45,30 +46,43 @@ public class BlockNeatAPIClient implements BlockNeatAPI{
         return internalUser.sign(body);
     }
 
+
+    private HttpRequest generatePostRequest(String path, HttpRequest.BodyPublisher body, String signature) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(endpoint + path))
+                .headers("Content-Type", "application/json")
+                .headers("signature", signature)
+                .POST(body)
+                .build();
+    }
+
+    private HttpRequest generateEmptyGetRequest(String path) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(endpoint + path))
+                .headers("Content-Type", "application/json")
+                .GET()
+                .build();
+    }
     @Override
     public String createUser() throws IOException, InterruptedException, SignatureException, InvalidKeyException {
         String signature = signBody(internalUser.getUsername());
         System.out.println(signature);
         UserRequest body = new UserRequest(new User.Id(internalUser.getUsername(), internalUser.getPublicKey()));
 
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(endpoint + "/users"))
-                .headers("Content-Type", "application/json")
-                .headers("signature", signature)
-                .POST(HttpRequest.BodyPublishers.ofString(toJson(body)))
-                .build();
+        HttpRequest httpRequest = generatePostRequest(USERS, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
 
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         return response.body();
     }
 
     @Override
-    public List<InternalUser> getAllUsers() {
-        return null;
+    public String getAllUsers() throws IOException, InterruptedException {
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest("/users"), HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
-    public void createAccount(String accountId) {
+    public void createAccount(String accountId) throws SignatureException, InvalidKeyException {
 
     }
 

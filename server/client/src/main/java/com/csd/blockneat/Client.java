@@ -20,6 +20,7 @@ public class Client {
         InternalUser user = new InternalUser("user1", ec);
         BlockNeatAPI bna = new BlockNeatAPIClient(user, url);
         System.out.println(bna.createUser());
+        System.out.println(bna.getAllUsers());
     }
 
 }
