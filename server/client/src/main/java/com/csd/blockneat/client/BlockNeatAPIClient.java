@@ -71,12 +71,12 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
                 .GET()
                 .build();
     }
+
     private HttpRequest generateGetRequest(String path, String body) {
         return HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + path))
                 .header("Content-Type", "application/json")
-                .method(body, HttpRequest.BodyPublishers.ofString(body))
-                .GET()
+                .method("GET", HttpRequest.BodyPublishers.ofString(body))
                 .build();
     }
 
@@ -94,7 +94,7 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
 
     @Override
     public String getAllUsers() throws IOException, InterruptedException {
-        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest("/users"), HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(USERS), HttpResponse.BodyHandlers.ofString());
         return response.body();
     }
 
@@ -125,9 +125,9 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     @Override
     public String loadMoney(String accountId, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException {
         String signature = signBody(accountId + value);
-        TransactionRequest body = new TransactionRequest("",accountId, value);
+        TransactionRequest body = new TransactionRequest("", accountId, value);
 
-        HttpRequest httpRequest = generatePostRequest(TRANSACTIONS+ "/loadMoney/" + accountId + "?value=" + value, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+        HttpRequest httpRequest = generatePostRequest(TRANSACTIONS + "/loadMoney/" + accountId + "?value=" + value, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
 
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         return response.body();
@@ -136,7 +136,7 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     @Override
     public String sendTransaction(String from, String to, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException {
         String signature = signBody(from + to + value);
-        TransactionRequest body = new TransactionRequest(from,to, value);
+        TransactionRequest body = new TransactionRequest(from, to, value);
 
         HttpRequest httpRequest = generatePostRequest(TRANSACTIONS, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
 
