@@ -9,13 +9,25 @@ services:
     ports:
       - "8080:8443"
       - "5005:5005"
+    depends_on:
+      - mongo0
     environment:
       REPLICA_ID: 0
-      SPRING_PROFILES_ACTIVE: bftsmart,tls
+      SPRING_PROFILES_ACTIVE: bftsmart,tls,mongo
       KEYSTORE_PASSWORD: password
+      MONGO_HOST: mongo0
     networks:
       bft:
         ipv4_address: 172.20.0.2
+  mongo0:
+    image: mongo
+    hostname: mongo0
+    ports:
+      - "27017:27017"
+    networks:
+      bft:
+        ipv4_address: 172.20.0.12
+    command: ["--bind_ip", "0.0.0.0"]
   bftsmart1:
     hostname: bftsmart1
     image: bft
@@ -24,13 +36,25 @@ services:
       dockerfile: ./server/rest/Dockerfile
     ports:
       - "8081:8443"
+    depends_on:
+      - mongo1
     environment:
       REPLICA_ID: 1
-      SPRING_PROFILES_ACTIVE: bftsmart,tls
+      SPRING_PROFILES_ACTIVE: bftsmart,tls,mongo
       KEYSTORE_PASSWORD: password
+      MONGO_HOST: mongo1
     networks:
       bft:
         ipv4_address: 172.20.0.3
+  mongo1:
+    image: mongo
+    hostname: mongo1
+    ports:
+      - "27018:27017"
+    networks:
+      bft:
+        ipv4_address: 172.20.0.13
+    command: ["--bind_ip", "0.0.0.0"]
   bftsmart2:
     hostname: bftsmart2
     image: bft
@@ -39,13 +63,25 @@ services:
       dockerfile: ./server/rest/Dockerfile
     ports:
       - "8082:8443"
+    depends_on:
+      - mongo2
     environment:
       REPLICA_ID: 2
-      SPRING_PROFILES_ACTIVE: bftsmart,tls
+      SPRING_PROFILES_ACTIVE: bftsmart,tls,mongo
       KEYSTORE_PASSWORD: password
+      MONGO_HOST: mongo2
     networks:
       bft:
         ipv4_address: 172.20.0.4
+  mongo2:
+    image: mongo
+    hostname: mongo2
+    ports:
+      - "27019:27017"
+    networks:
+      bft:
+        ipv4_address: 172.20.0.14
+    command: ["--bind_ip", "0.0.0.0"]
   bftsmart3:
     hostname: bftsmart3
     image: bft
@@ -54,13 +90,25 @@ services:
       dockerfile: ./server/rest/Dockerfile
     ports:
       - "8083:8443"
+    depends_on:
+      - mongo3
     environment:
       REPLICA_ID: 3
-      SPRING_PROFILES_ACTIVE: bftsmart,tls
+      SPRING_PROFILES_ACTIVE: bftsmart,tls,mongo
       KEYSTORE_PASSWORD: password
+      MONGO_HOST: mongo3
     networks:
       bft:
         ipv4_address: 172.20.0.5
+  mongo3:
+    image: mongo
+    hostname: mongo3
+    ports:
+      - "27020:27017"
+    networks:
+      bft:
+        ipv4_address: 172.20.0.15
+    command: ["--bind_ip", "0.0.0.0"]
 networks:
   bft:
     ipam:

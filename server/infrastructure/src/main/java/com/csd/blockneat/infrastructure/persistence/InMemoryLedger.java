@@ -15,6 +15,9 @@ import com.csd.blockneat.application.transactions.commands.LoadMoneyCommand;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -32,13 +35,13 @@ import java.util.stream.Stream;
 public class InMemoryLedger implements LedgerRepository, Serializable {
 
     private Queue<WriteCommand> commands;
-    @Getter
-    private List<ValidatedBlock> blocks;
 
-    public InMemoryLedger() {
+    private transient final MongoTemplate mongoTemplate;
+
+    public InMemoryLedger(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
         commands = new ConcurrentLinkedQueue<>();
-        blocks = new ArrayList<>();
-        blocks.add(new ValidatedBlock(new Block(0, 0, "", new ArrayList<>()), ""));
+        mongoTemplate.insert(new ValidatedBlock(new Block(0, 0, "", new ArrayList<>()), ""), "validatedBlocks");
     }
 
     @Override
@@ -53,7 +56,7 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
 
     @Override
     public Stream<WriteCommand> getConfirmedCommandsStream() {
-        return blocks.stream()
+        return getBlocks().stream()
                 .map(ValidatedBlock::block)
                 .map(Block::transactions)
                 .flatMap(Collection::stream);
@@ -67,7 +70,10 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
         if (transactions.size() != 16) {
             return null;
         }
-        return new Block(blocks.size(), 0, blocks.get(blocks.size() - 1).hash(), transactions);
+        Query id = new Query().limit(1)
+                .with(Sort.by(Sort.Direction.DESC, "block.id"));
+        var validatedBlock = mongoTemplate.findOne(id, ValidatedBlock.class, "validatedBlocks");
+        return new Block(validatedBlock.block().id() + 1, 0, validatedBlock.hash(), transactions);
     }
 
     @Override
@@ -91,8 +97,15 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
         for (int i = 0; i < 16; i++) {
             commands.remove();
         }
+        mongoTemplate.insert(validatedBlock, "validatedBlocks");
+        return true;
+    }
 
-        return blocks.add(validatedBlock);
+    @Override
+    public List<ValidatedBlock> getBlocks() {
+        Query query = new Query();
+        query.with(Sort.by(Sort.Direction.ASC, "block.id"));
+        return mongoTemplate.find(query, ValidatedBlock.class, "validatedBlocks");
     }
 
     private Account getAccountWith(String accountId) {
@@ -124,7 +137,7 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
     public byte[] getSnapshot() {
         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
              ObjectOutput objOut = new ObjectOutputStream(byteOut)) {
-            objOut.writeObject(this);
+            objOut.writeObject(this); //TODO blocks
             return byteOut.toByteArray();
         } catch (IOException e) {
             log.warn("Error while taking snapshot", e);
@@ -136,8 +149,7 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
         try (ByteArrayInputStream byteIn = new ByteArrayInputStream(state);
              ObjectInput objIn = new ObjectInputStream(byteIn)) {
             var replicaLedger = (InMemoryLedger) objIn.readObject();
-            commands = replicaLedger.commands;
-            blocks = replicaLedger.blocks;
+            commands = replicaLedger.commands; //TODO blocks
         } catch (IOException | ClassNotFoundException e) {
             log.error("Error while installing snapshot", e);
         }
