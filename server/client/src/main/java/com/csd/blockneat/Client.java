@@ -20,9 +20,11 @@ public class Client {
         InternalUser user = new InternalUser("user1", ec);
         BlockNeatAPI bna = new BlockNeatAPIClient(user, url);
         System.out.println(bna.createUser());
-        System.out.println(bna.getAllUsers());
         System.out.println(bna.createAccount("account1"));
-        System.out.println(bna.getAllAccounts());
+        System.out.println(bna.createAccount("account2"));
+        System.out.println(bna.loadMoney("account1", 10000));
+        System.out.println(bna.sendTransaction("account1","account2", 100));
+        System.out.println(bna.getBalance("account2"));
     }
 
 }

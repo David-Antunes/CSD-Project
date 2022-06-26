@@ -19,9 +19,9 @@ public interface BlockNeatAPI {
 
     String getBalance(String accountId) throws IOException, InterruptedException;
 
-    void loadMoney(String accountId, int value);
+    String loadMoney(String accountId, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException;
 
-    void sendTransaction(String from, String to, int value);
+    String sendTransaction(String from, String to, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException;
 
     String getExtract(String accountId) throws IOException, InterruptedException;
 

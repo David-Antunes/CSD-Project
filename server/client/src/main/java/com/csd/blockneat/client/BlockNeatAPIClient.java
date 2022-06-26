@@ -3,6 +3,7 @@ package com.csd.blockneat.client;
 import com.csd.blockneat.application.entities.Account;
 import com.csd.blockneat.application.entities.User;
 import com.csd.blockneat.rest.requests.AccountRequest;
+import com.csd.blockneat.rest.requests.TransactionRequest;
 import com.csd.blockneat.rest.requests.UserRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,7 +100,7 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
 
     @Override
     public String getAllAccounts() throws IOException, InterruptedException {
-        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest("/accounts"), HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(ACCOUNTS), HttpResponse.BodyHandlers.ofString());
         return response.body();
 
     }
@@ -111,13 +112,25 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     }
 
     @Override
-    public void loadMoney(String accountId, int value) {
+    public String loadMoney(String accountId, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException {
+        String signature = signBody(accountId + value);
+        TransactionRequest body = new TransactionRequest("",accountId, value);
 
+        HttpRequest httpRequest = generatePostRequest(TRANSACTIONS+ "/loadMoney/" + accountId + "?value=" + value, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
-    public void sendTransaction(String from, String to, int value) {
+    public String sendTransaction(String from, String to, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException {
+        String signature = signBody(from + to + value);
+        TransactionRequest body = new TransactionRequest(from,to, value);
 
+        HttpRequest httpRequest = generatePostRequest(TRANSACTIONS, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     @Override
@@ -146,7 +159,6 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
 
     @Override
     public String getLedger() throws IOException, InterruptedException {
-
         HttpResponse<String> response = httpClient.send(generateEmptyGetRequest(LEDGER), HttpResponse.BodyHandlers.ofString());
         return response.body();
     }
