@@ -1,9 +1,9 @@
 package com.csd.blockneat.client;
 
+import com.csd.blockneat.utils.ECDSASignature;
+
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Base64;
 public class InternalUser {
     ECDSASignature signature;

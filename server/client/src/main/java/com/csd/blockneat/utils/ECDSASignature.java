@@ -1,4 +1,4 @@
-package com.csd.blockneat.client;
+package com.csd.blockneat.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;

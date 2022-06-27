@@ -50,6 +50,7 @@ public class Miner {
                         minedBlock = byteOut.toByteArray();
                     }
                     blockNeatAPI.proposeBlock(minedBlock);
+                    System.out.println("Block Mined.");
                 } catch (IOException | InterruptedException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }

@@ -2,9 +2,10 @@ package com.csd.blockneat;
 
 import com.csd.blockneat.client.BlockNeatAPI;
 import com.csd.blockneat.client.BlockNeatAPIClient;
-import com.csd.blockneat.client.ECDSASignature;
+import com.csd.blockneat.utils.ECDSASignature;
 import com.csd.blockneat.client.InternalUser;
 import com.csd.blockneat.miner.Miner;
+import com.csd.blockneat.workload.Fill;
 
 import java.io.IOException;
 import java.security.*;
@@ -13,8 +14,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.security.cert.X509Certificate;
-import java.util.concurrent.Executor;
 
 public class Client {
     public static final String KEY_STORE_PATH = "config/users.pkcs12";
@@ -22,7 +21,7 @@ public class Client {
     static ECDSASignature ec;
 
     static Miner miner;
-
+    static String url = "https://172.20.0.2:8443";
 
     private static void changeUser(String filename, String password, String username, String userPassword) {
         try {
@@ -53,12 +52,16 @@ public class Client {
                     System.out.println(bna.getTotalValue(accounts));
                 }
                 case "gb" -> System.out.println(bna.getBalance(command[1]));
+                case "gu" -> System.out.println(bna.getAllUsers());
+                case "ga" -> System.out.println(bna.getAllAccounts());
+                case "gt" -> System.out.println(bna.getAllTransactions());
                 case "ge" -> System.out.println(bna.getExtract(command[1]));
                 case "chu" -> changeUser("config/users.pkcs12", "users", command[1], command[2]);
                 case "ggv" -> System.out.println(bna.getGlobalValue());
                 case "gl" -> System.out.println(bna.getLedger());
                 case "help", "h" -> help();
                 case "mine" -> mine();
+                case "fill" -> Fill.fill(url, KEY_STORE_PATH, KEY_STORE_PASSWORD, "user", 5);
                 default -> System.out.println("Invalid command");
             }
         } catch(Exception e) {
@@ -90,8 +93,6 @@ public class Client {
     public static void main(String[] args) {
 
         System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
-        String url = "https://172.20.0.2:8443";
-//        String url = "https://localhost:8080";
 
         changeUser(KEY_STORE_PATH, KEY_STORE_PASSWORD, "user1", "user1");
 
@@ -108,5 +109,4 @@ public class Client {
             handleCommand(command, bna);
         } while (!command[0].equals("exit"));
     }
-
 }
