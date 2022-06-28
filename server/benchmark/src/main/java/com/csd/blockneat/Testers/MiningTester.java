@@ -10,9 +10,9 @@ public class MiningTester extends Tester implements Callable<Object> {
     BlockNeatAPI client;
     long executionTime;
 
-    public MiningTester(BlockNeatAPI client, int seconds) {
+    public MiningTester(BlockNeatAPI client, long executionTime) {
         this.client = client;
-        executionTime = seconds * 1000L;
+        this.executionTime = executionTime;
     }
 
     @Override

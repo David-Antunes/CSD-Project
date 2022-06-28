@@ -80,22 +80,24 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
     @Override
     public void benchmark() {
 
-        for (int i = 0; i < threadNumber - miners; i++) {
+        for (int i = 0; i < super.threadNumber - miners; i++) {
             int id = ThreadLocalRandom.current().nextInt(0, clients.size());
-            testers.add(new OperationTester(clients.get(id), clients.size(), 0.0f, seconds));
+            testers.add(new OperationTester(clients.get(id), clients.size(), 0.0f, super.executionTime));
         }
 
         for (int i = 0; i < miners; i++) {
-            testers.add(new MiningTester(clients.get(1), seconds));
+            testers.add(new MiningTester(clients.get(1), super.executionTime));
         }
 
         try {
-            executorService.invokeAll(IntStream.range(0, threadNumber)
+            executorService.invokeAll(IntStream.range(0, super.threadNumber)
                     .mapToObj(testers::get)
                     .toList());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        while(!executorService.isShutdown());
+
     }
 
     @Override

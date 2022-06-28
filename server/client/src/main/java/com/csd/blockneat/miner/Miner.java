@@ -77,6 +77,7 @@ public class Miner {
             blockNeatAPI.proposeBlock(minedBlock);
             return true;
         } catch (IOException | InterruptedException | ClassNotFoundException e) {
+            e.printStackTrace();
             return false;
         }
     }
