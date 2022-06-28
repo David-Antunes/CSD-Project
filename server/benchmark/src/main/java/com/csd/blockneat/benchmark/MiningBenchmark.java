@@ -2,9 +2,17 @@ package com.csd.blockneat.benchmark;
 
 import com.csd.blockneat.Testers.MiningTester;
 import com.csd.blockneat.Testers.OperationTester;
+import com.csd.blockneat.application.commands.WriteCommand;
+import com.csd.blockneat.application.entities.Block;
+import com.csd.blockneat.application.entities.ValidatedBlock;
+import com.csd.blockneat.application.transactions.commands.LoadMoneyCommand;
+import com.csd.blockneat.application.transactions.commands.SendTransactionCommand;
 import com.csd.blockneat.client.BlockNeatAPI;
-import com.csd.blockneat.workload.Fill;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -12,25 +20,24 @@ import java.util.stream.IntStream;
 
 public class MiningBenchmark extends GenericBenchmark implements Benchmark {
 
-    private int miners;
-    private int seconds;
+    private final int miners;
+    private final int seconds;
     private float operationThroughput;
 
 
     private float avgTransactionLatency;
 
-    private LinkedList<Long> transactionLatency;
+    private final List<Long> transactionLatency;
 
-    private LinkedList<Long> mineBlockLatency;
+    private List<Long> mineBlockLatency;
 
     private float avgMinedBlock;
-
 
 
     public MiningBenchmark(List<BlockNeatAPI> clients, int threads, int miners, int seconds) {
         super(clients, threads, seconds);
         this.miners = miners;
-        this.seconds =seconds;
+        this.seconds = seconds;
         this.operationThroughput = 0.0f;
         this.avgMinedBlock = 0.0f;
         this.avgTransactionLatency = 0.0f;
@@ -58,11 +65,15 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
         return miners;
     }
 
-    public LinkedList<Long> getMineBlockLatency() {
+    public List<Long> getMineBlockLatency() {
         return mineBlockLatency;
     }
 
-    public LinkedList<Long> getTransactionLatency() {
+    public int getBlocksMined() {
+        return mineBlockLatency.size() + 1;
+    }
+
+    public List<Long> getTransactionLatency() {
         return transactionLatency;
     }
 
@@ -74,7 +85,7 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
             testers.add(new OperationTester(clients.get(id), clients.size(), 0.0f, seconds));
         }
 
-        for(int i = 0; i < miners; i++) {
+        for (int i = 0; i < miners; i++) {
             testers.add(new MiningTester(clients.get(1), seconds));
         }
 
@@ -89,6 +100,50 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
 
     @Override
     public void processStatistics() {
+        String response = "";
+        List<ValidatedBlock> blockneat = null;
+        try {
+            response = clients.get(0).getLedger();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ObjectMapper om = new ObjectMapper();
+        try {
+            blockneat = om.readValue(response, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        blockneat = blockneat.subList(1, blockneat.size());
+        int transactions = 0;
+        for (ValidatedBlock vBlock : blockneat) {
+            long blockTimestamp = vBlock.timestamp();
+            mineBlockLatency.add(blockTimestamp);
+            Block block = vBlock.block();
+            transactions += block.transactions().size();
+            for (WriteCommand wc : block.transactions()) {
+                if (wc instanceof LoadMoneyCommand loadMoneyCommand) {
+                    transactionLatency.add(vBlock.timestamp() - loadMoneyCommand.timestamp());
+                } else if (wc instanceof SendTransactionCommand sendTransactionCommand)
+                    transactionLatency.add(vBlock.timestamp() - sendTransactionCommand.timestamp());
+            }
+        }
 
+        for (Long value : transactionLatency)
+            avgTransactionLatency += value;
+        avgTransactionLatency = avgTransactionLatency / transactions;
+
+
+        List<Long> timeTillNextBlock = new LinkedList<>();
+        for (int i = 0; i < mineBlockLatency.size() - 1; i++) {
+             timeTillNextBlock.add(mineBlockLatency.get(i+1) - mineBlockLatency.get(i));
+        }
+        mineBlockLatency = timeTillNextBlock;
+        for (Long aLong : timeTillNextBlock) {
+            avgMinedBlock += aLong;
+        }
+        avgMinedBlock = avgMinedBlock / timeTillNextBlock.size();
+
+        operationThroughput = (float) transactions / seconds;
     }
 }

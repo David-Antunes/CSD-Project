@@ -9,12 +9,13 @@ import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.application.entities.User;
 import com.csd.blockneat.application.users.UserRepository;
 import com.csd.blockneat.application.ExceptionCode;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-
+@JsonTypeName("CreateUserCommand")
 public record CreateUserCommand(User.Id userId,
                                 String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
 

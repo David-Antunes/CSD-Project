@@ -22,7 +22,6 @@ public class MiningTester extends Tester implements Callable<Object> {
         long startTime = System.currentTimeMillis();
         while (true) {
             miner.mineBlock();
-
             if (startTime + executionTime < System.currentTimeMillis())
                 break;
         }

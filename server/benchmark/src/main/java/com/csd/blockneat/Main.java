@@ -1,3 +1,5 @@
+package com.csd.blockneat;
+
 import com.csd.blockneat.benchmark.GenericBenchmark;
 import com.csd.blockneat.benchmark.MiningBenchmark;
 import com.csd.blockneat.benchmark.OperationBenchmark;
@@ -14,14 +16,6 @@ import java.util.List;
 import java.util.Properties;
 
 public class Main {
-
-    private static InetSocketAddress parseSocketAddress(String socketAddress) {
-        String[] split = socketAddress.split(":");
-        String host = split[0];
-        int port = Integer.parseInt(split[1]);
-        return new InetSocketAddress(host, port);
-    }
-
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, SignatureException, InvalidKeyException, InterruptedException {
 
@@ -58,13 +52,12 @@ public class Main {
         int seconds = 0;
 
         if (operation.equals("api")) {
-            readPercentage = Float.parseFloat(config.getProperty("reads"));
-            userNumber = Integer.parseInt(config.getProperty("userNumber"));
+            readPercentage = Float.parseFloat(config.getProperty("readPercentage"));
 
         } else if (operation.equals("mining")) {
             miners = Integer.parseInt(config.getProperty("minerNumber"));
         }
-
+        userNumber = Integer.parseInt(config.getProperty("userNumber"));
         userKeyStoreFile = config.getProperty("userKeyStoreFile");
         userKeyStorePassword = config.getProperty("userKeyStorePassword");
         threads = Integer.parseInt(config.getProperty("threads"));
@@ -73,15 +66,57 @@ public class Main {
 
         List<BlockNeatAPI> clients = Fill.LoadUsers(url, userKeyStoreFile, userKeyStorePassword, "user", userNumber);
         Fill.preLoadBlockNeat(clients, clients.size());
-        GenericBenchmark bm = null;
         if (operation.equals("api")) {
-            bm = new OperationBenchmark(clients, threads, readPercentage, seconds);
+            OperationBenchmark bm = new OperationBenchmark(clients, threads, readPercentage, seconds);
+            bm.benchmark();
+            bm.processStatistics();
+            processOperationStatistics(bm);
         } else if (operation.equals("mining")) {
-            bm = new MiningBenchmark(clients, threads, miners, seconds);
+            MiningBenchmark bm = new MiningBenchmark(clients, threads, miners, seconds);
+            bm.benchmark();
+            bm.processStatistics();
+            processMiningStatistics(bm);
         }
-        assert bm != null;
-        bm.benchmark();
-        bm.processStatistics();
+
         System.exit(0);
+    }
+
+    private static void processOperationStatistics(OperationBenchmark bm) {
+        System.out.println("========================================");
+        System.out.println();
+        System.out.println("Writes:");
+        for(Long value: bm.getWrites())
+            System.out.println(value);
+
+        System.out.println();
+        System.out.println("Reads:");
+        for(Long value: bm.getReads())
+            System.out.println(value);
+
+        System.out.println();
+        System.out.println();
+        System.out.println("Write Operations: " + bm.getWrites().size());
+        System.out.println("Avg Write Latency (ms): " + bm.getAvgWrites());
+        System.out.println("Read Operations: " + bm.getReads().size());
+        System.out.println("Avg Read Latency (ms): " + bm.getAvgReads());
+        System.out.println("Operation Throughput (Tx/s): " + bm.getOperationThroughput());
+        System.out.println("Execution time: " + bm.getSeconds() + " s");
+    }
+
+    private static void processMiningStatistics(MiningBenchmark bm) {
+        System.out.println("========================================");
+        System.out.println();
+        System.out.println("PoW:");
+        for(Long value: bm.getMineBlockLatency())
+            System.out.println(value);
+
+        System.out.println();
+        System.out.println();
+        System.out.println("Blocks mined: " + bm.getBlocksMined());
+        System.out.println("Avg PoW (ms): " + bm.getAvgMinedBlock());
+        System.out.println("Transaction Operations: " + bm.getTransactionLatency().size());
+        System.out.println("Avg Transaction Latency (ms): " + bm.getAvgTransactionLatency());
+        System.out.println("Operation Throughput (Tx/s): " + bm.getOperationThroughput());
+        System.out.println("Execution time: " + bm.getSeconds() + " s");
     }
 }

@@ -30,7 +30,7 @@ public class TransactionController {
                         transactionRequest.from(),
                         transactionRequest.to(),
                         transactionRequest.value(),
-                        signBase64
+                        signBase64, System.currentTimeMillis()
                 ).execute(pipeline)
         );
     }
@@ -38,7 +38,7 @@ public class TransactionController {
     @PostMapping("/loadMoney/{accountId}")
     public void loadMoney(@PathVariable String accountId, @RequestParam int value, @RequestHeader("signature") String signBase64) {
         HandleWebExceptions.resultOrException(
-                new LoadMoneyCommand(accountId, value, signBase64).execute(pipeline)
+                new LoadMoneyCommand(accountId, value, signBase64, System.currentTimeMillis()).execute(pipeline)
         );
     }
 

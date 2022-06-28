@@ -41,7 +41,7 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
     public InMemoryLedger(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         commands = new ConcurrentLinkedQueue<>();
-        mongoTemplate.insert(new ValidatedBlock(new Block(0, 0, "", new ArrayList<>()), ""), "validatedBlocks");
+        mongoTemplate.insert(new ValidatedBlock(new Block(0, 0, "", new ArrayList<>()), "", 0), "validatedBlocks");
     }
 
     @Override

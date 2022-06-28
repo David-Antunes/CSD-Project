@@ -84,7 +84,7 @@ public class Miner {
     private ValidatedBlock validateBlock(Block nextBlock) {
         String accountId = "account11";
         int value = 1000;
-        nextBlock.transactions().add(0, new LoadMoneyCommand(accountId, value, signReward(accountId, value)));
+        nextBlock.transactions().add(0, new LoadMoneyCommand(accountId, value, signReward(accountId, value), System.currentTimeMillis()));
         String hash;
         do {
             nextBlock = new Block(
@@ -96,7 +96,7 @@ public class Miner {
             hash = SHA512.hexHash(nextBlock.toString());
         } while (!hash.startsWith("000"));
 
-        return new ValidatedBlock(nextBlock, hash);
+        return new ValidatedBlock(nextBlock, hash, System.currentTimeMillis());
     }
 
     private String signReward(String accountId, int value) {

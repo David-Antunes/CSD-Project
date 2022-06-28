@@ -3,6 +3,7 @@ package com.csd.blockneat.benchmark;
 import com.csd.blockneat.Testers.Tester;
 import com.csd.blockneat.client.BlockNeatAPI;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +23,7 @@ public abstract class GenericBenchmark implements Benchmark {
         this.clients = clients;
         this.executorService = Executors.newFixedThreadPool(threadNumber);
         this.executionTime = seconds * CONVERT_TO_MILLIS;
+        this.testers = new LinkedList<>();
     }
 
 }

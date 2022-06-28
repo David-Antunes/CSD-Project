@@ -86,13 +86,11 @@ public class OperationBenchmark extends GenericBenchmark implements Benchmark {
         }
         long writeLatency = 0;
         for (Long value : writes) {
-            System.out.println(value);
             writeLatency += value;
         }
 
         long readLatency = 0;
         for (Long value : reads) {
-            System.out.println(value);
             readLatency += value;
         }
 

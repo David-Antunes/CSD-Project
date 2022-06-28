@@ -3,7 +3,6 @@ package com.csd.blockneat.application.ledger.commands;
 import an.awesome.pipelinr.Command;
 import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.application.commands.ReadCommand;
-import com.csd.blockneat.application.commands.WriteCommand;
 import com.csd.blockneat.application.entities.ValidatedBlock;
 import com.csd.blockneat.application.ledger.LedgerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
