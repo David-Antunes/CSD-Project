@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface BlockNeatAPI {
 
+    InternalUser getInternalUser();
+
     String createUser() throws IOException, InterruptedException, SignatureException, InvalidKeyException;
 
     String getAllUsers() throws IOException, InterruptedException;

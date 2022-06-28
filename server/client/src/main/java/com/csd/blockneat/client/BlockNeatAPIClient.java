@@ -48,6 +48,11 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
         }
     }
 
+    @Override
+    public InternalUser getInternalUser() {
+        return internalUser;
+    }
+
     private String signBody(String body) throws SignatureException, InvalidKeyException {
         return internalUser.sign(body);
     }
@@ -76,6 +81,7 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
         return HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + path))
                 .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .method("GET", HttpRequest.BodyPublishers.ofString(body))
                 .build();
     }
@@ -191,7 +197,8 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     public void proposeBlock(byte[] block) throws IOException, InterruptedException {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + "/mining"))
-                .headers("Content-Type", "application/octet-stream")
+                .header("Content-Type", "application/octet-stream")
+                .header("Accept","application/json")
                 .POST(HttpRequest.BodyPublishers.ofByteArray(block))
                 .build();
 

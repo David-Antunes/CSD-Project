@@ -58,6 +58,29 @@ public class Miner {
         });
     }
 
+    public boolean mineBlock() {
+        try {
+            Block nextBlock;
+            try (var byteIn = new ByteArrayInputStream(blockNeatAPI.getNextBlock());
+                 var objIn = new ObjectInputStream(byteIn)) {
+                nextBlock = (Block) objIn.readObject();
+            }
+            ValidatedBlock validatedBlock = validateBlock(nextBlock);
+            byte[] minedBlock;
+            try (var byteOut = new ByteArrayOutputStream();
+                 var objOut = new ObjectOutputStream(byteOut)) {
+                objOut.writeObject(validatedBlock);
+                objOut.flush();
+                byteOut.flush();
+                minedBlock = byteOut.toByteArray();
+            }
+            blockNeatAPI.proposeBlock(minedBlock);
+            return true;
+        } catch (IOException | InterruptedException | ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     private ValidatedBlock validateBlock(Block nextBlock) {
         String accountId = "account11";
         int value = 1000;
