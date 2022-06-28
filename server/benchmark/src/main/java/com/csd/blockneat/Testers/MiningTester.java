@@ -19,7 +19,6 @@ public class MiningTester extends Tester implements Callable<Object> {
     public Object call() {
         System.out.println("Started Miner.");
         Miner miner = new Miner(client, client.getInternalUser());
-//        System.out.println("Thread " + id + " has started");
         long startTime = System.currentTimeMillis();
         while (true) {
             miner.mineBlock();
@@ -28,7 +27,6 @@ public class MiningTester extends Tester implements Callable<Object> {
                 break;
         }
         System.out.println("Ended Miner.");
-//        System.out.println("Thread " + id + " has ended");
         return null;
     }
 }

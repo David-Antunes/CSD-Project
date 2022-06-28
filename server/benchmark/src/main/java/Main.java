@@ -24,24 +24,7 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, SignatureException, InvalidKeyException, InterruptedException {
-//        if (args.length != 1) {
-//            System.out.println("bench <workload_file>");
-//            System.exit(1000);
-//        }
-//        // Load Configuration to execute benchmark
-//        InputStream workload = new FileInputStream(args[0]);
-//        Properties config = new Properties();
-//        config.load(workload);
-//        workload.close();
-//
-//        // Load Threads PoW miners and IP
-//        int threads = Integer.parseInt(config.getProperty("threads"));
-//        int PoW = Integer.parseInt(config.getProperty("difficulty"));
-//        int miners = Integer.parseInt(config.getProperty("miners"));
-//        InetSocketAddress ip = parseSocketAddress(config.getProperty("ip"));
-//        int users = Integer.parseInt(config.getProperty("users"));
-//        String jks_password = config.getProperty("jks_password");
-//        String filename = config.getProperty("filename");
+
         String benchmarkConfigurationFile = null;
         System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
         if (args.length > 1) {
@@ -65,7 +48,7 @@ public class Main {
         workload.close();
 
         String operation = config.getProperty("operation");
-        int threads = 0;
+        int threads;
         int miners = 0;
         float readPercentage = 0.0f;
         String url;

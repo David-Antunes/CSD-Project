@@ -5,6 +5,7 @@ import com.csd.blockneat.Testers.OperationTester;
 import com.csd.blockneat.client.BlockNeatAPI;
 import com.csd.blockneat.workload.Fill;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
@@ -13,13 +14,56 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
 
     private int miners;
     private int seconds;
-    private int blocksToMine;
     private float operationThroughput;
 
-    private List<Long> writes;
+
+    private float avgTransactionLatency;
+
+    private LinkedList<Long> transactionLatency;
+
+    private LinkedList<Long> mineBlockLatency;
+
+    private float avgMinedBlock;
+
+
 
     public MiningBenchmark(List<BlockNeatAPI> clients, int threads, int miners, int seconds) {
         super(clients, threads, seconds);
+        this.miners = miners;
+        this.seconds =seconds;
+        this.operationThroughput = 0.0f;
+        this.avgMinedBlock = 0.0f;
+        this.avgTransactionLatency = 0.0f;
+        this.transactionLatency = new LinkedList<>();
+        this.mineBlockLatency = new LinkedList<>();
+    }
+
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public float getOperationThroughput() {
+        return operationThroughput;
+    }
+
+    public float getAvgMinedBlock() {
+        return avgMinedBlock;
+    }
+
+    public float getAvgTransactionLatency() {
+        return avgTransactionLatency;
+    }
+
+    public int getMiners() {
+        return miners;
+    }
+
+    public LinkedList<Long> getMineBlockLatency() {
+        return mineBlockLatency;
+    }
+
+    public LinkedList<Long> getTransactionLatency() {
+        return transactionLatency;
     }
 
     @Override
