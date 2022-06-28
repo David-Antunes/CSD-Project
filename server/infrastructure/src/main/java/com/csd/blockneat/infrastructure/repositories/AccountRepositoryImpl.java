@@ -30,44 +30,22 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public boolean containsUnconfirmed(String accountId) {
-        return containsWith(accountId, ledger.getUnconfirmedCommandsStream());
-    }
-
-    @Override
-    public boolean containsConfirmed(String accountId) {
-        return containsWith(accountId, ledger.getConfirmedCommandsStream());
-    }
-
-    private boolean containsWith(String accountId, Stream<WriteCommand> commandsStream) {
-        return commandsStream
+        boolean pending = ledger.getPendingCommandsStream()
                 .filter(CreateAccountCommand.class::isInstance)
                 .map(CreateAccountCommand.class::cast)
                 .map(CreateAccountCommand::accountId)
                 .anyMatch(accountId::equals);
+        return pending || containsConfirmed(accountId);
     }
 
     @Override
-    public Account getConfirmed(String accountId) {
-        return getAccountWith(accountId, ledger.getConfirmedCommandsStream());
+    public boolean containsConfirmed(String accountId) {
+        return ledger.getConfirmed(accountId) != null;
     }
 
     @Override
     public Account getUnconfirmed(String accountId) {
-        return getAccountWith(accountId, ledger.getUnconfirmedCommandsStream());
-    }
-
-    private Account getAccountWith(String accountId, Stream<WriteCommand> commandsStream) {
-        var accounts = commandsStream
-                .filter(CreateAccountCommand.class::isInstance)
-                .map(CreateAccountCommand.class::cast)
-                .filter(accountCommand -> accountCommand.accountId().equals(accountId))
-                .map(accountCommand -> new Account(accountCommand.accountId(), accountCommand.userId()))
-                .toList();
-        if (accounts.isEmpty()) {
-            return null;
-        } else {
-            return accounts.get(0);
-        }
+        return ledger.getUnconfirmed(accountId);
     }
 
     @Override
@@ -77,11 +55,11 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     private Stream<Transaction> getUnconfirmedTransactionStream() {
-        return getTransactionStream(ledger.getUnconfirmedCommandsStream(), this::getUnconfirmed);
+        return getTransactionStream(ledger.getPendingCommandsStream(), ledger::getUnconfirmed);
     }
 
     private Stream<Transaction> getConfirmedTransactionStream() {
-        return getTransactionStream(ledger.getConfirmedCommandsStream(), this::getConfirmed);
+        return getTransactionStream(ledger.getAllConfirmedTransactions().stream(), ledger::getConfirmed);
     }
 
     private Stream<Transaction> getTransactionStream(Stream<WriteCommand> commandsStream, Function<String, Account> getAccount) {
@@ -158,11 +136,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public List<Account> getAll() {
-        return ledger.getConfirmedCommandsStream()
-                .filter(CreateAccountCommand.class::isInstance)
-                .map(CreateAccountCommand.class::cast)
-                .map(accountCommand -> new Account(accountCommand.accountId(), accountCommand.userId()))
-                .toList();
+        return ledger.getAllConfirmedAccounts();
     }
 
 }

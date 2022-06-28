@@ -33,7 +33,7 @@ public record CreateUserCommand(User.Id userId,
         public Either<Voidy> handle(CreateUserCommand command) {
             if (!ECDSA.verifySign(command.userId.base64pk(), command.signBase64, command.userId.email()))
                 return Either.failure(ExceptionCode.INVALID_SIGNATURE);
-            if (users.contains(command.userId.email()))
+            if (users.containsUnconfirmed(command.userId.email()))
                 return Either.failure(ExceptionCode.USER_EXISTS);
 
             return Either.success();

@@ -1,6 +1,5 @@
 package com.csd.blockneat.infrastructure.repositories;
 
-import com.csd.blockneat.application.accounts.commands.CreateAccountCommand;
 import com.csd.blockneat.application.entities.Account;
 import com.csd.blockneat.application.entities.User;
 import com.csd.blockneat.application.users.UserRepository;
@@ -21,25 +20,21 @@ public class UserRepositoryImpl implements UserRepository {
         this.ledger = ledger;
     }
 
-    public boolean contains(String userId) {
-        return ledger.getUnconfirmedCommandsStream()
+    public boolean containsUnconfirmed(String userId) {
+        boolean pending = ledger.getPendingCommandsStream()
                 .filter(CreateUserCommand.class::isInstance)
                 .map(CreateUserCommand.class::cast)
                 .map(CreateUserCommand::userId)
                 .map(User.Id::email)
                 .anyMatch(userId::equals);
+        return pending || ledger.getConfirmedUserCommand(userId) != null;
     }
 
     @Override
     public List<User> getAll() {
-        var createAccountCommands = ledger.getUnconfirmedCommandsStream()
-                .filter(CreateAccountCommand.class::isInstance)
-                .map(CreateAccountCommand.class::cast)
-                .toList();
+        var createAccountCommands = ledger.getConfirmedCreateAccountCommands();
 
-        return ledger.getUnconfirmedCommandsStream()
-                .filter(CreateUserCommand.class::isInstance)
-                .map(CreateUserCommand.class::cast)
+        return ledger.getAllConfirmedUsers().stream()
                 .map(userCommand -> {
                     var id = userCommand.userId();
                     var userAccounts = createAccountCommands.stream()

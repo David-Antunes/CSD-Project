@@ -10,10 +10,6 @@ import java.util.stream.Stream;
 public interface LedgerRepository {
     boolean append(WriteCommand command);
 
-    Stream<WriteCommand> getUnconfirmedCommandsStream();
-
-    Stream<WriteCommand> getConfirmedCommandsStream();
-
     Block getNextBlock();
 
     boolean receiveBlock(ValidatedBlock block);

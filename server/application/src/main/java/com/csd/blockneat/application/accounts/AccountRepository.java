@@ -24,8 +24,6 @@ public interface AccountRepository {
 
     boolean containsConfirmed(String accountId);
 
-    Account getConfirmed(String accountId);
-
     Account getUnconfirmed(String accountId);
 
     int getConfirmedBalance(String accountId);

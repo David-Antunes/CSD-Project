@@ -7,5 +7,5 @@ import java.util.List;
 public interface UserRepository {
     List<User> getAll();
 
-    boolean contains(String userId);
+    boolean containsUnconfirmed(String userId);
 }

@@ -36,7 +36,7 @@ public record CreateAccountCommand(User.Id userId, String accountId,
         public Either<Voidy> handle(CreateAccountCommand command) {
             if (!ECDSA.verifySign(command.userId().base64pk(), command.signBase64, command.accountId))
                 return Either.failure(ExceptionCode.INVALID_SIGNATURE);
-            if (!users.contains(command.userId.email()))
+            if (!users.containsUnconfirmed(command.userId.email()))
                 return Either.failure(ExceptionCode.USER_DOES_NOT_EXIST);
             else if (accounts.containsUnconfirmed(command.accountId))
                 return Either.failure(ExceptionCode.ACCOUNT_EXISTS);
