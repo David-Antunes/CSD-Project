@@ -96,8 +96,6 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        while(!executorService.isShutdown());
-
     }
 
     @Override

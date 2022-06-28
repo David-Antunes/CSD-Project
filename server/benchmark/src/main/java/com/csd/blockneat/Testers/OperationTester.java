@@ -31,7 +31,7 @@ public class OperationTester extends Tester implements Callable<Object> {
         this.writeLatency = new LinkedList<>();
         this.readLatency = new LinkedList<>();
         this.executionTime = executionTime;
-        this.id = client.getInternalUser().getUsername().split("user")[0];
+        this.id = client.getInternalUser().getUsername().split("user")[1];
     }
 
     public List<Long> getReadLatency() {
