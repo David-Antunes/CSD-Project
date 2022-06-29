@@ -6,5 +6,9 @@ build/
 
 env/
 venv/
-*.jks
 bin/
+*.iml
+
+config/currentView
+
+results/

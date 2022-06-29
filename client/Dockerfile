@@ -1,8 +1,8 @@
-FROM python:3.9.12 as BUILD
+FROM python:3.9.12 as build
 WORKDIR app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-FROM BUILD
+FROM build
 COPY . .
 CMD ["python3", "bft-client.py"]
