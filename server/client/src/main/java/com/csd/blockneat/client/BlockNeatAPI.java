@@ -1,6 +1,6 @@
 package com.csd.blockneat.client;
 
-import com.csd.blockneat.application.entities.Account;
+import com.csd.blockneat.rest.requests.BlockneatStatistic;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -38,4 +38,6 @@ public interface BlockNeatAPI {
     byte[] getNextBlock() throws IOException, InterruptedException;
 
     void proposeBlock(byte[] block) throws IOException, InterruptedException;
+
+    BlockneatStatistic getBlockneatStatistic() throws IOException, InterruptedException;
 }

@@ -24,6 +24,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation project(":server:client")
     implementation project(":server:application")
+    implementation project(":server:rest")
 }
 
 test {
