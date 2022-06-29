@@ -213,6 +213,7 @@ public class InMemoryLedger implements LedgerRepository, Serializable {
                 .and("transactions.to").as("to")
                 .and("transactions.value").as("value")
                 .and("transactions.signBase64").as("signBase64")
+                .and("transactions.timestamp").as("timestamp")
                 .and("transactions._class").as("_class")
                 .andExclude("_id");
 

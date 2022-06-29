@@ -36,7 +36,11 @@ public class Miner {
             while (true) {
                 try {
                     Block nextBlock;
-                    try (var byteIn = new ByteArrayInputStream(blockNeatAPI.getNextBlock());
+                    byte[] block;
+                    while((block = blockNeatAPI.getNextBlock()) == null) {
+                        Thread.sleep(1000);
+                    }
+                    try (var byteIn = new ByteArrayInputStream(block);
                          var objIn = new ObjectInputStream(byteIn)) {
                         nextBlock = (Block) objIn.readObject();
                     }
@@ -49,10 +53,10 @@ public class Miner {
                         byteOut.flush();
                         minedBlock = byteOut.toByteArray();
                     }
-                    blockNeatAPI.proposeBlock(minedBlock);
-                    System.out.println("Block Mined.");
+                    if(blockNeatAPI.proposeBlock(minedBlock))
+                        System.out.println("Block Mined.");
                 } catch (IOException | InterruptedException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+//                    throw new RuntimeException(e);
                 }
             }
         });

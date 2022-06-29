@@ -1,7 +1,8 @@
 package com.csd.blockneat;
 
-import com.csd.blockneat.rest.requests.TransactionRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.csd.blockneat.crypto.BlockneatSignatures;
+import com.csd.blockneat.requests.Response;
+import com.csd.blockneat.requests.TransactionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,20 +18,23 @@ import java.net.http.HttpResponse;
 @RequestMapping("/proxy")
 public class ProxyTransaction {
 
+    String url;
+    URI uri;
+    ObjectMapper om;
+    BlockneatSignatures replicaSignatures;
     @Autowired
-    public ProxyTransaction() {
-
+    public ProxyTransaction() throws URISyntaxException {
+        url = "https://172.20.0.2:8443/transactions";
+        uri = new URI(url);
+        om = new ObjectMapper();
         System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
+        replicaSignatures = new BlockneatSignatures(4);
     }
 
     @PostMapping()
-    public void sendTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("signature") String signBase64) throws IOException, URISyntaxException, InterruptedException {
-        String url = "https://172.20.0.2:8443/transactions";
-        URI uri;
-        ObjectMapper om = new ObjectMapper();
-        String body;
+    public Response sendTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("signature") String signBase64) throws IOException, InterruptedException {
 
-        uri = new URI(url);
+        String body;
         body = om.writeValueAsString(transactionRequest);
 
 
@@ -41,6 +45,14 @@ public class ProxyTransaction {
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
 
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+       var response =  HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        Response signatures = om.readValue(response.body(), Response.class);
+
+        if(!replicaSignatures.verifySignatures(signatures))
+            return null;
+        else {
+            return new Response(replicaSignatures.getSign().of(signatures.response().object()));
+        }
+
     }
 }

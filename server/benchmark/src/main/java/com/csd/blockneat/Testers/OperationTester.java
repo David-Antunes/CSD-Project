@@ -46,13 +46,18 @@ public class OperationTester extends Tester implements Callable<Object> {
     public Object call() {
 //        System.out.println("Thread " + id + " has started");
         long startTime = System.currentTimeMillis();
+        long response = 0;
         while (true) {
 
             float nextOperation = ThreadLocalRandom.current().nextFloat();
             if (nextOperation < readPercentage) {
-                readLatency.add(readOperation());
+                response = readOperation();
+                if(response != -1)
+                    readLatency.add(readOperation());
             } else {
-                writeLatency.add(writeOperation());
+                response = writeOperation();
+                if(response != -1)
+                    writeLatency.add(writeOperation());
             }
             if (startTime + executionTime < System.currentTimeMillis())
                 break;
@@ -82,9 +87,12 @@ public class OperationTester extends Tester implements Callable<Object> {
         int value = ThreadLocalRandom.current().nextInt(0, 100);
         try {
             long startOperation = System.currentTimeMillis();
-            client.sendTransaction(Fill.ACCOUNT_ID + id + randomAccount, Fill.ACCOUNT_ID + randomUserDestination + randomAccountDestination, value);
+            int response = client.sendTransactionWithResult(Fill.ACCOUNT_ID + id + randomAccount, Fill.ACCOUNT_ID + randomUserDestination + randomAccountDestination, value);
             long endOperation = System.currentTimeMillis();
-            return endOperation - startOperation;
+            if(response == 200 || response == 408)
+                    return endOperation - startOperation;
+            else
+                return -1;
         } catch (SignatureException | InterruptedException | IOException | InvalidKeyException e) {
             e.printStackTrace();
             return -1;

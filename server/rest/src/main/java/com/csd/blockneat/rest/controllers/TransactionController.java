@@ -7,6 +7,7 @@ import com.csd.blockneat.application.entities.Transaction;
 import com.csd.blockneat.application.transactions.commands.*;
 import com.csd.blockneat.rest.exceptions.HandleWebExceptions;
 import com.csd.blockneat.infrastructure.pipelinr.PipelinrConfig;
+import com.csd.blockneat.rest.requests.Response;
 import com.csd.blockneat.rest.requests.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,13 +28,13 @@ public class TransactionController {
     }
 
     @PostMapping()
-    public Signed<Either<Integer>> sendTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("signature") String signBase64) {
-        return new SendTransactionCommand(
+    public Response sendTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("signature") String signBase64) {
+        return new Response(new SendTransactionCommand(
                         transactionRequest.from(),
                         transactionRequest.to(),
                         transactionRequest.value(),
                         signBase64, System.currentTimeMillis()
-                ).execute(pipeline);
+                ).execute(pipeline));
     }
 
     @PostMapping("/loadMoney/{accountId}")

@@ -27,6 +27,7 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     public static final String GLOBAL_VALUE = TRANSACTIONS + "/global";
     public static final String EXTRACT = TRANSACTIONS + "/extract/";
     public static final String LEDGER = "/ledger";
+    public static final String PROXY = "/proxy";
     private final InternalUser internalUser;
     String endpoint;
 
@@ -34,10 +35,16 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
 
     ObjectMapper om = new ObjectMapper();
 
+    String proxy;
+
     public BlockNeatAPIClient(InternalUser internalUser, String endpoint) {
         this.internalUser = internalUser;
         this.endpoint = endpoint;
         this.httpClient = HttpClient.newHttpClient();
+
+        this.proxy = null;
+        if (System.getenv("PROXY") != null) ;
+        proxy = System.getenv("PROXY");
     }
 
     private String toJson(Object object) {
@@ -61,6 +68,16 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     private HttpRequest generatePostRequest(String path, HttpRequest.BodyPublisher body, String signature) {
         return HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + path))
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("signature", signature)
+                .POST(body)
+                .build();
+    }
+
+    private HttpRequest sendToProxy(String path, HttpRequest.BodyPublisher body, String signature) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(proxy + path))
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .header("signature", signature)
@@ -143,11 +160,28 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     public String sendTransaction(String from, String to, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException {
         String signature = signBody(from + to + value);
         TransactionRequest body = new TransactionRequest(from, to, value);
-
-        HttpRequest httpRequest = generatePostRequest(TRANSACTIONS, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+        HttpRequest httpRequest;
+        if (proxy != null) {
+            httpRequest = sendToProxy(PROXY, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+        } else {
+            httpRequest = generatePostRequest(TRANSACTIONS, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+        }
 
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         return response.body();
+    }
+    @Override
+    public int sendTransactionWithResult(String from, String to, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException {
+        String signature = signBody(from + to + value);
+        TransactionRequest body = new TransactionRequest(from, to, value);
+        HttpRequest httpRequest;
+        if (proxy != null) {
+            httpRequest = sendToProxy(PROXY, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+        } else {
+            httpRequest = generatePostRequest(TRANSACTIONS, HttpRequest.BodyPublishers.ofString(toJson(body)), signature);
+        }
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        return response.statusCode();
     }
 
     @Override
@@ -194,7 +228,7 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     }
 
     @Override
-    public void proposeBlock(byte[] block) throws IOException, InterruptedException {
+    public boolean proposeBlock(byte[] block) throws IOException, InterruptedException {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + "/mining"))
                 .header("Content-Type", "application/octet-stream")
@@ -202,7 +236,8 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
                 .POST(HttpRequest.BodyPublishers.ofByteArray(block))
                 .build();
 
-        httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+        HttpResponse response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+        return response.statusCode() == 200;
     }
 
     public BlockneatStatistic getBlockneatStatistic() throws IOException, InterruptedException {

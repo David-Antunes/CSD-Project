@@ -1,6 +1,6 @@
-package com.csd.blockneat.application.crypto;
+package com.csd.blockneat.crypto;
 
-import com.csd.blockneat.application.entities.Signed;
+import com.csd.blockneat.requests.Signed;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;

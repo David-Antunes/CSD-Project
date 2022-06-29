@@ -118,7 +118,7 @@ public class OperationBenchmark extends GenericBenchmark implements Benchmark {
             myWriter.write("readPercentage,");
             myWriter.write("avgReads,");
             myWriter.write("avgWrites,");
-            myWriter.write("operationThroughput");
+            myWriter.write("operationThroughput\n");
 
             myWriter.write(seconds + ",");
             myWriter.write(threadNumber + ",");

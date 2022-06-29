@@ -24,7 +24,7 @@ public interface BlockNeatAPI {
     String loadMoney(String accountId, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException;
 
     String sendTransaction(String from, String to, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException;
-
+    int sendTransactionWithResult(String from, String to, int value) throws SignatureException, InvalidKeyException, IOException, InterruptedException;
     String getExtract(String accountId) throws IOException, InterruptedException;
 
     String getTotalValue(List<String> accounts) throws IOException, InterruptedException;
@@ -37,7 +37,7 @@ public interface BlockNeatAPI {
 
     byte[] getNextBlock() throws IOException, InterruptedException;
 
-    void proposeBlock(byte[] block) throws IOException, InterruptedException;
+    boolean proposeBlock(byte[] block) throws IOException, InterruptedException;
 
     BlockneatStatistic getBlockneatStatistic() throws IOException, InterruptedException;
 }

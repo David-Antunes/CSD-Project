@@ -103,7 +103,7 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        if(response == null)
+        if (response == null)
             throw new RuntimeException();
 
         mineBlockLatency = response.minedBlockLatency();
@@ -115,40 +115,40 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
 
     public void writeResultsToFile(String extension) {
         try {
-            if(!Files.exists(Paths.get("results")))
+            if (!Files.exists(Paths.get("results")))
                 Files.createDirectory(Paths.get("results"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        try(FileWriter myWriter = new FileWriter("results/statistics-" + extension + ".csv")) {
-                myWriter.write("seconds,");
-                myWriter.write("transactions,");
-                myWriter.write("threads,");
-                myWriter.write("blocksMined,");
-                myWriter.write("avgMinedBlock,");
-                myWriter.write("avgTransactionBlock,");
-                myWriter.write("operationThroughput\n");
-                myWriter.write(seconds + ",");
-                myWriter.write(transactionLatency.size() + ",");
-                myWriter.write(threadNumber + ",");
-                myWriter.write((mineBlockLatency.size()+1) + ",");
-                myWriter.write(avgMinedBlock + ",");
-                myWriter.write(avgTransactionLatency + ",");
-                myWriter.write(operationThroughput + "\n");
-                myWriter.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        try (FileWriter myWriter = new FileWriter("results/statistics-" + extension + ".csv")) {
+            myWriter.write("seconds,");
+            myWriter.write("transactions,");
+            myWriter.write("threads,");
+            myWriter.write("blocksMined,");
+            myWriter.write("avgMinedBlock,");
+            myWriter.write("avgTransactionBlock,");
+            myWriter.write("operationThroughput\n");
+            myWriter.write(seconds + ",");
+            myWriter.write(transactionLatency.size() + ",");
+            myWriter.write(threadNumber + ",");
+            myWriter.write((mineBlockLatency.size() + 1) + ",");
+            myWriter.write(avgMinedBlock + ",");
+            myWriter.write(avgTransactionLatency + ",");
+            myWriter.write(operationThroughput + "\n");
+            myWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        try(FileWriter myWriter = new FileWriter("results/transactionLatency-" + extension + ".txt")) {
-            for(long value: transactionLatency)
+        try (FileWriter myWriter = new FileWriter("results/transactionLatency-" + extension + ".txt")) {
+            for (long value : transactionLatency)
                 myWriter.write(value + "\n");
             myWriter.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        try(FileWriter myWriter = new FileWriter("results/mineBlockLatency-" + extension + ".txt")) {
-            for(long value: mineBlockLatency)
+        try (FileWriter myWriter = new FileWriter("results/mineBlockLatency-" + extension + ".txt")) {
+            for (long value : mineBlockLatency)
                 myWriter.write(value + "\n");
             myWriter.flush();
         } catch (IOException e) {

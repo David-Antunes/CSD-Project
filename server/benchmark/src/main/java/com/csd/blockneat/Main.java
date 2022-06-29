@@ -35,6 +35,7 @@ public class Main {
             System.exit(1);
         }
 
+
         InputStream workload = new FileInputStream(benchmarkConfigurationFile);
         Properties config = new Properties();
         config.load(workload);
@@ -65,6 +66,16 @@ public class Main {
         String extension = config.getProperty("output_file");
         List<BlockNeatAPI> clients = Fill.LoadUsers(url, userKeyStoreFile, userKeyStorePassword, "user", userNumber);
         Fill.preLoadBlockNeat(clients, clients.size());
+
+
+        if (System.getenv("PROCESS_BLOCKNEAT") != null) {
+            MiningBenchmark bm = new MiningBenchmark(clients, 10, 0, 0);
+            bm.processStatistics();
+            processMiningStatistics(bm);
+            System.exit(0);
+        }
+
+
         if (operation.equals("api")) {
             OperationBenchmark bm = new OperationBenchmark(clients, threads, readPercentage, seconds);
             bm.benchmark();

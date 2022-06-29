@@ -124,7 +124,7 @@ public abstract class BftSmartGenericCommandHandler<C extends Command<R>, R> imp
                 }
             }, reqType);
 
-            return consensusReply.get(20, TimeUnit.SECONDS);
+            return consensusReply.get(300, TimeUnit.SECONDS);
         } catch (IOException | ExecutionException | InterruptedException e) {
             log.warn("Exception handling command: ", e);
             return null;
