@@ -1,8 +1,6 @@
 package com.csd.blockneat.rest.controllers;
 
 import an.awesome.pipelinr.Pipeline;
-import com.csd.blockneat.application.Either;
-import com.csd.blockneat.application.entities.Block;
 import com.csd.blockneat.application.entities.ValidatedBlock;
 import com.csd.blockneat.application.mining.commands.GetBlockToMineQuery;
 import com.csd.blockneat.application.mining.commands.ProposeBlockCommand;
@@ -10,7 +8,6 @@ import com.csd.blockneat.infrastructure.pipelinr.PipelinrConfig;
 import com.csd.blockneat.rest.exceptions.HandleWebExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;

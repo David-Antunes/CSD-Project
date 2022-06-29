@@ -1,20 +1,8 @@
 package com.csd.blockneat.application;
 
-;
-import lombok.EqualsAndHashCode;
-
 import java.io.Serializable;
 
-@EqualsAndHashCode
-public class Either<T> implements Serializable {
-    private final ExceptionCode code;
-    private final T result;
-
-    public Either(ExceptionCode code, T t) {
-        this.code = code;
-        this.result = t;
-    }
-
+public record Either<T>(ExceptionCode code, T result) implements Serializable {
     public ExceptionCode left() {
         return code;
     }

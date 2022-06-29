@@ -6,12 +6,16 @@ import bftsmart.tom.AsynchServiceProxy;
 import bftsmart.tom.RequestContext;
 import bftsmart.tom.core.messages.TOMMessage;
 import bftsmart.tom.core.messages.TOMMessageType;
+import com.csd.blockneat.application.entities.Signed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.io.*;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @ConditionalOnProperty(name = "bftsmart.enabled")
@@ -43,11 +47,61 @@ public abstract class BftSmartGenericCommandHandler<C extends Command<R>, R> imp
 
             operationId = serviceProxy.invokeAsynchRequest(byteOut.toByteArray(), new ReplyListener() {
 
-                private final Map<R, Integer> replies = new ConcurrentHashMap<>();
+                class UnsignedQuorum {
+                    private final Map<R, Integer> replies = new ConcurrentHashMap<>();
+
+                    public void processReply(R replyObject, int quorum, RequestContext context) {
+                        replies.merge(replyObject, 1, Integer::sum);
+
+                        for (Map.Entry<R, Integer> replyCount : replies.entrySet()) {
+                            if (replyCount.getValue() >= quorum) {
+                                serviceProxy.cleanAsynchRequest(context.getOperationId());
+                                consensusReply.complete(replyCount.getKey());
+                                return;
+                            }
+                        }
+                    }
+
+                    public void reset() {
+                        replies.clear();
+                    }
+                }
+
+                class SignedQuorum {
+                    private final Map<Object, Map<Integer, String>> signedReplies = new ConcurrentHashMap<>();
+
+                    public void processReply(Signed<?> signed, int quorum, RequestContext context) {
+                        signedReplies.merge(signed.object(), signed.signBase64(),
+                                (sign, sign2) -> Stream.concat(sign.entrySet().stream(), sign2.entrySet().stream())
+                                        .collect(Collectors.toMap(
+                                                Map.Entry::getKey,
+                                                Map.Entry::getValue,
+                                                (s, s2) -> s,
+                                                TreeMap::new
+                                        )));
+
+                        for (Map.Entry<Object, Map<Integer, String>> replyCount : signedReplies.entrySet()) {
+                            if (replyCount.getValue().size() >= quorum) {
+                                serviceProxy.cleanAsynchRequest(context.getOperationId());
+                                consensusReply.complete((R) new Signed<>(replyCount.getKey(), replyCount.getValue()));
+                                return;
+                            }
+                        }
+                    }
+
+                    public void reset() {
+                        signedReplies.clear();
+                    }
+                }
+
+                private final UnsignedQuorum unsignedQuorum = new UnsignedQuorum();
+
+                private final SignedQuorum signedQuorum = new SignedQuorum();
 
                 @Override
                 public void reset() {
-                    replies.clear();
+                    unsignedQuorum.reset();
+                    signedQuorum.reset();
                 }
 
                 @Override
@@ -57,21 +111,15 @@ public abstract class BftSmartGenericCommandHandler<C extends Command<R>, R> imp
                          ObjectInput objIn = new ObjectInputStream(byteIn)) {
 
                         R replyObject = (R) objIn.readObject();
-                        replies.merge(replyObject, 1, Integer::sum);
+                        int quorum = (serviceProxy.getViewManager().getCurrentViewN() +
+                                serviceProxy.getViewManager().getCurrentViewF()) / 2 + 1;
+                        if (replyObject instanceof Signed<?> signed) {
+                            signedQuorum.processReply(signed, quorum, context);
+                        } else {
+                            unsignedQuorum.processReply(replyObject, quorum, context);
+                        }
                     } catch (IOException | ClassNotFoundException e) {
                         log.warn("Exception handling command: ", e);
-                        return;
-                    }
-
-                    int quorum = (serviceProxy.getViewManager().getCurrentViewN() +
-                            serviceProxy.getViewManager().getCurrentViewF()) / 2 + 1;
-
-                    for (Map.Entry<R, Integer> replyCount : replies.entrySet()) {
-                        if (replyCount.getValue() >= quorum) {
-                            serviceProxy.cleanAsynchRequest(context.getOperationId());
-                            consensusReply.complete(replyCount.getKey());
-                            return;
-                        }
                     }
                 }
             }, reqType);

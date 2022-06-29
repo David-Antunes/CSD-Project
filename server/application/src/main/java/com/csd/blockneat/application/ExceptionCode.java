@@ -1,6 +1,8 @@
 package com.csd.blockneat.application;
 
-public enum ExceptionCode {
+import java.io.Serializable;
+
+public enum ExceptionCode implements Serializable {
     SUCCESS,
     USER_EXISTS,
     USER_DOES_NOT_EXIST,

@@ -1,6 +1,8 @@
 package com.csd.blockneat.rest.controllers;
 
 import an.awesome.pipelinr.Pipeline;
+import com.csd.blockneat.application.Either;
+import com.csd.blockneat.application.entities.Signed;
 import com.csd.blockneat.application.entities.Transaction;
 import com.csd.blockneat.application.transactions.commands.*;
 import com.csd.blockneat.rest.exceptions.HandleWebExceptions;
@@ -25,14 +27,13 @@ public class TransactionController {
     }
 
     @PostMapping()
-    public void sendTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("signature") String signBase64) {
-        HandleWebExceptions.resultOrException(new SendTransactionCommand(
+    public Signed<Either<Integer>> sendTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("signature") String signBase64) {
+        return new SendTransactionCommand(
                         transactionRequest.from(),
                         transactionRequest.to(),
                         transactionRequest.value(),
                         signBase64, System.currentTimeMillis()
-                ).execute(pipeline)
-        );
+                ).execute(pipeline);
     }
 
     @PostMapping("/loadMoney/{accountId}")

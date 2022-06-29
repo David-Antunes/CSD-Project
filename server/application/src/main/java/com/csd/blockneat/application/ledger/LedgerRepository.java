@@ -5,7 +5,6 @@ import com.csd.blockneat.application.entities.Block;
 import com.csd.blockneat.application.entities.ValidatedBlock;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public interface LedgerRepository {
     boolean append(WriteCommand command);

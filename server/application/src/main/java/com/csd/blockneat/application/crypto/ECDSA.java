@@ -1,18 +1,28 @@
 package com.csd.blockneat.application.crypto;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.spec.X509EncodedKeySpec;
-import java.security.spec.XECPublicKeySpec;
-import java.util.Base64;
+import com.csd.blockneat.application.entities.Signed;
+import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+import java.util.Map;
+import java.util.TreeMap;
+
+@Component
 public class ECDSA {
+
+    private final int replicaId;
+
+    public ECDSA() {
+        String replica_id = System.getenv("REPLICA_ID");
+        this.replicaId = replica_id != null ? Integer.parseInt(replica_id) : 0;
+    }
+
     public static boolean verifySign(String certBase64, String signBase64, String message) {
         try {
             PublicKey ecdsa = KeyFactory
@@ -24,8 +34,38 @@ public class ECDSA {
             signature.update(message.getBytes(StandardCharsets.UTF_8));
             return signature.verify(Base64.getDecoder().decode(signBase64.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
 
+    public String sign(String message) {
+        try {
+            String key = Files.readString(Path.of("./config/replicaKeys/ec-secp256k1-priv-key-pkcs8-" + replicaId + ".pem"));
+            String privateKeyPEM = key
+                    .replace("-----BEGIN PRIVATE KEY-----", "")
+                    .replaceAll("\n", "")
+                    .replace("-----END PRIVATE KEY-----", "");
+            byte[] decodedKey = Base64.getDecoder().decode(privateKeyPEM);
+
+            PrivateKey privateKey = KeyFactory
+                    .getInstance("EC", "BC")
+                    .generatePrivate(new PKCS8EncodedKeySpec(decodedKey));
+
+            Signature signature = Signature.getInstance("SHA512withECDSA", "BC");
+            signature.initSign(privateKey, new SecureRandom());
+            signature.update(message.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(signature.sign());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public <T> Signed<T> of(T object) {
+        String signature = sign(object.toString());
+        Map<Integer, String> signatures = new TreeMap<>();
+        signatures.put(replicaId, signature);
+        return new Signed<>(object, signatures);
+    }
 }
