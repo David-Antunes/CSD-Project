@@ -61,7 +61,7 @@ public class LedgerController {
 
         for (Long value : transactionLatency)
             avgTransactionLatency += value;
-        avgTransactionLatency = avgTransactionLatency / transactions;
+        avgTransactionLatency = transactions != 0 ? avgTransactionLatency / transactions : 0.0f;
 
 
         List<Long> timeTillNextBlock = new LinkedList<>();
@@ -72,10 +72,8 @@ public class LedgerController {
         for (Long aLong : timeTillNextBlock) {
             avgMinedBlock += aLong;
         }
-        avgMinedBlock = avgMinedBlock / timeTillNextBlock.size();
+        avgMinedBlock = avgMinedBlock != 0.0f ? avgMinedBlock / timeTillNextBlock.size() : 0.0f;
         return new BlockneatStatistic(transactions, mineBlockLatency, transactionLatency, avgMinedBlock, avgTransactionLatency);
 
     }
-
-
 }

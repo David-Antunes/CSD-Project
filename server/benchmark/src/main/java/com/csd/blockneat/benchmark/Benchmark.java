@@ -6,4 +6,6 @@ public interface Benchmark {
 
     void processStatistics();
 
+    void writeResultsToFile(String extension);
+
 }

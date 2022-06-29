@@ -5,10 +5,14 @@ import com.csd.blockneat.Testers.OperationTester;
 import com.csd.blockneat.client.BlockNeatAPI;
 import com.csd.blockneat.rest.requests.BlockneatStatistic;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 public class MiningBenchmark extends GenericBenchmark implements Benchmark {
@@ -106,6 +110,49 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
         transactionLatency = response.transactionLatency();
         avgMinedBlock = response.avgMinedBlock();
         avgTransactionLatency = response.avgTransactionLatency();
-        operationThroughput = (float) response.transactions() / seconds;
+        operationThroughput = response.transactions() != 0 ? (float) response.transactions() / seconds : 0.0f;
+    }
+
+    public void writeResultsToFile(String extension) {
+        try {
+            if(!Files.exists(Paths.get("results")))
+                Files.createDirectory(Paths.get("results"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try(FileWriter myWriter = new FileWriter("results/statistics-" + extension + ".csv")) {
+                myWriter.write("seconds,");
+                myWriter.write("transactions,");
+                myWriter.write("threads,");
+                myWriter.write("blocksMined,");
+                myWriter.write("avgMinedBlock,");
+                myWriter.write("avgTransactionBlock,");
+                myWriter.write("operationThroughput\n");
+                myWriter.write(seconds + ",");
+                myWriter.write(transactionLatency.size() + ",");
+                myWriter.write(threadNumber + ",");
+                myWriter.write((mineBlockLatency.size()+1) + ",");
+                myWriter.write(avgMinedBlock + ",");
+                myWriter.write(avgTransactionLatency + ",");
+                myWriter.write(operationThroughput + "\n");
+                myWriter.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        try(FileWriter myWriter = new FileWriter("results/transactionLatency-" + extension + ".txt")) {
+            for(long value: transactionLatency)
+                myWriter.write(value + "\n");
+            myWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try(FileWriter myWriter = new FileWriter("results/mineBlockLatency-" + extension + ".txt")) {
+            for(long value: mineBlockLatency)
+                myWriter.write(value + "\n");
+            myWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

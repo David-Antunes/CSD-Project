@@ -7,6 +7,7 @@ import com.csd.blockneat.application.entities.ValidatedBlock;
 import com.csd.blockneat.application.mining.commands.GetBlockToMineQuery;
 import com.csd.blockneat.application.mining.commands.ProposeBlockCommand;
 import com.csd.blockneat.infrastructure.pipelinr.PipelinrConfig;
+import com.csd.blockneat.rest.exceptions.HandleWebExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -49,7 +50,7 @@ public class MiningController {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        new ProposeBlockCommand(block).execute(pipeline);
+        HandleWebExceptions.resultOrException((new ProposeBlockCommand(block).execute(pipeline)));
     }
 }
 

@@ -1,6 +1,6 @@
 package com.csd.blockneat;
 
-import com.csd.blockneat.benchmark.GenericBenchmark;
+import com.csd.blockneat.benchmark.Benchmark;
 import com.csd.blockneat.benchmark.MiningBenchmark;
 import com.csd.blockneat.benchmark.OperationBenchmark;
 import com.csd.blockneat.client.BlockNeatAPI;
@@ -9,7 +9,6 @@ import com.csd.blockneat.workload.Fill;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.List;
@@ -63,7 +62,7 @@ public class Main {
         threads = Integer.parseInt(config.getProperty("threads"));
         url = config.getProperty("url");
         seconds = Integer.parseInt(config.getProperty("seconds"));
-
+        String extension = config.getProperty("output_file");
         List<BlockNeatAPI> clients = Fill.LoadUsers(url, userKeyStoreFile, userKeyStorePassword, "user", userNumber);
         Fill.preLoadBlockNeat(clients, clients.size());
         if (operation.equals("api")) {
@@ -71,11 +70,13 @@ public class Main {
             bm.benchmark();
             bm.processStatistics();
             processOperationStatistics(bm);
+            bm.writeResultsToFile(extension);
         } else if (operation.equals("mining")) {
             MiningBenchmark bm = new MiningBenchmark(clients, threads, miners, seconds);
             bm.benchmark();
             bm.processStatistics();
             processMiningStatistics(bm);
+            bm.writeResultsToFile(extension);
         }
 
         System.exit(0);

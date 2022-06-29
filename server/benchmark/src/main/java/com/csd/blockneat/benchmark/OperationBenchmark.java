@@ -4,6 +4,10 @@ import com.csd.blockneat.Testers.OperationTester;
 import com.csd.blockneat.Testers.Tester;
 import com.csd.blockneat.client.BlockNeatAPI;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -97,5 +101,51 @@ public class OperationBenchmark extends GenericBenchmark implements Benchmark {
         avgWrites = writes.size() > 0 ? (float) writeLatency / writes.size() : 0;
         avgReads = reads.size() > 0 ? (float) readLatency / reads.size() : 0;
         operationThroughput = (float) (reads.size() + writes.size()) / seconds;
+    }
+
+    public void writeResultsToFile(String extension) {
+        try {
+            if(!Files.exists(Paths.get("results")))
+                Files.createDirectory(Paths.get("results"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try(FileWriter myWriter = new FileWriter("results/statistics-" + extension + ".csv")) {
+            myWriter.write("seconds,");
+            myWriter.write("threads,");
+            myWriter.write("reads,");
+            myWriter.write("writes,");
+            myWriter.write("readPercentage,");
+            myWriter.write("avgReads,");
+            myWriter.write("avgWrites,");
+            myWriter.write("operationThroughput");
+
+            myWriter.write(seconds + ",");
+            myWriter.write(threadNumber + ",");
+            myWriter.write(reads.size() + ",");
+            myWriter.write(writes.size() + ",");
+            myWriter.write(readPercentage + ",");
+            myWriter.write(avgReads + ",");
+            myWriter.write(avgWrites + ",");
+            myWriter.write(operationThroughput + "\n");
+            myWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try(FileWriter myWriter = new FileWriter("results/reads-" + extension + ".txt")) {
+            for(long value: reads)
+                myWriter.write(value + "\n");
+            myWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try(FileWriter myWriter = new FileWriter("results/writes-" + extension + ".txt")) {
+            for(long value: writes)
+                myWriter.write(value + "\n");
+            myWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
