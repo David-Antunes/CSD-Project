@@ -20,15 +20,7 @@ public class Fill {
     public static final int TRANSACTION_LOAD = 100;
 
     public static void fill(String endpoint, String filename, String password, String userId, int userNumber) throws UnrecoverableKeyException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, InvalidKeyException, InterruptedException {
-        List<BlockNeatAPI> users = new ArrayList<>(userNumber);
-        List<String> accounts = new ArrayList<>(ACCOUNT_NUMBER * userNumber);
-        //Load users to a list
-        for (int i = 0; i < userNumber; i++) {
-            ECDSASignature ec = new ECDSASignature(ECDSASignature.fetchKeyPair(filename, password, userId + i, userId + i));
-            InternalUser user = new InternalUser(userId + i, ec);
-            users.add(new BlockNeatAPIClient(user, endpoint));
-            System.out.println("Loaded " + userId + i);
-        }
+        List<BlockNeatAPI> users = LoadUsers(endpoint,filename,password,userId,userNumber);
 
         //Create Users
         for (int i = 0; i < userNumber; i++) {
@@ -82,5 +74,30 @@ public class Fill {
         System.out.println("FILL DONE!");
     }
 
+    public static List<BlockNeatAPI> LoadUsers(String endpoint, String filename, String password, String userId, int userNumber) throws UnrecoverableKeyException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, NoSuchProviderException {
+        List<BlockNeatAPI> users = new ArrayList<>(userNumber);
+        List<String> accounts = new ArrayList<>(ACCOUNT_NUMBER * userNumber);
+        //Load users to a list
+        for (int i = 0; i < userNumber; i++) {
+            ECDSASignature ec = new ECDSASignature(ECDSASignature.fetchKeyPair(filename, password, userId + i, userId + i));
+            InternalUser user = new InternalUser(userId + i, ec);
+            users.add(new BlockNeatAPIClient(user, endpoint));
+        }
+        return users;
+    }
 
+    public static void preLoadBlockNeat(List<BlockNeatAPI> users,int userNumber) throws IOException, SignatureException, InvalidKeyException, InterruptedException {
+        //Create Users
+        for (int i = 0; i < userNumber; i++) {
+            users.get(i).createUser();
+        }
+
+        //Create Accounts With Money
+        for (int i = 0; i < userNumber; i++) {
+            for (int j = 0; j < ACCOUNT_NUMBER; j++) {
+                users.get(i).createAccount(ACCOUNT_ID + i + j);
+                users.get(i).loadMoney(ACCOUNT_ID + i + j, 100000);
+            }
+        }
+    }
 }

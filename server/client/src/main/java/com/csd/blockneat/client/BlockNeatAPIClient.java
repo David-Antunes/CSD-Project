@@ -1,14 +1,14 @@
 package com.csd.blockneat.client;
 
-import com.csd.blockneat.application.entities.Account;
 import com.csd.blockneat.application.entities.User;
+import com.csd.blockneat.rest.requests.BlockneatStatistic;
 import com.csd.blockneat.rest.requests.AccountRequest;
 import com.csd.blockneat.rest.requests.TransactionRequest;
 import com.csd.blockneat.rest.requests.UserRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -48,6 +48,11 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
         }
     }
 
+    @Override
+    public InternalUser getInternalUser() {
+        return internalUser;
+    }
+
     private String signBody(String body) throws SignatureException, InvalidKeyException {
         return internalUser.sign(body);
     }
@@ -76,6 +81,7 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
         return HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + path))
                 .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .method("GET", HttpRequest.BodyPublishers.ofString(body))
                 .build();
     }
@@ -191,10 +197,22 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
     public void proposeBlock(byte[] block) throws IOException, InterruptedException {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(endpoint + "/mining"))
-                .headers("Content-Type", "application/octet-stream")
+                .header("Content-Type", "application/octet-stream")
+                .header("Accept", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofByteArray(block))
                 .build();
 
         httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+    }
+
+    public BlockneatStatistic getBlockneatStatistic() throws IOException, InterruptedException {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint + "/ledger/statistics"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        return om.readValue(response.body(), BlockneatStatistic.class);
     }
 }

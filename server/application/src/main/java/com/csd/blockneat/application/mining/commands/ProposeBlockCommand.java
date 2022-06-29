@@ -8,12 +8,15 @@ import com.csd.blockneat.application.commands.CommandTypes;
 import com.csd.blockneat.application.commands.WriteCommand;
 import com.csd.blockneat.application.entities.ValidatedBlock;
 import com.csd.blockneat.application.ledger.LedgerRepository;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-
+@JsonTypeName("ProposeBlockCommand")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record ProposeBlockCommand(ValidatedBlock block) implements Command<Either<Voidy>>, WriteCommand, Serializable {
 
     @Component

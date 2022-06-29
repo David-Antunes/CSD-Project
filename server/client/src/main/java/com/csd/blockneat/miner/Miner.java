@@ -58,10 +58,34 @@ public class Miner {
         });
     }
 
+    public boolean mineBlock() {
+        try {
+            Block nextBlock;
+            try (var byteIn = new ByteArrayInputStream(blockNeatAPI.getNextBlock());
+                 var objIn = new ObjectInputStream(byteIn)) {
+                nextBlock = (Block) objIn.readObject();
+            }
+            ValidatedBlock validatedBlock = validateBlock(nextBlock);
+            byte[] minedBlock;
+            try (var byteOut = new ByteArrayOutputStream();
+                 var objOut = new ObjectOutputStream(byteOut)) {
+                objOut.writeObject(validatedBlock);
+                objOut.flush();
+                byteOut.flush();
+                minedBlock = byteOut.toByteArray();
+            }
+            blockNeatAPI.proposeBlock(minedBlock);
+            return true;
+        } catch (IOException | InterruptedException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private ValidatedBlock validateBlock(Block nextBlock) {
         String accountId = "account11";
         int value = 1000;
-        nextBlock.transactions().add(0, new LoadMoneyCommand(accountId, value, signReward(accountId, value)));
+        nextBlock.transactions().add(0, new LoadMoneyCommand(accountId, value, signReward(accountId, value), System.currentTimeMillis()));
         String hash;
         do {
             nextBlock = new Block(
@@ -73,7 +97,7 @@ public class Miner {
             hash = SHA512.hexHash(nextBlock.toString());
         } while (!hash.startsWith("000"));
 
-        return new ValidatedBlock(nextBlock, hash);
+        return new ValidatedBlock(nextBlock, hash, System.currentTimeMillis());
     }
 
     private String signReward(String accountId, int value) {

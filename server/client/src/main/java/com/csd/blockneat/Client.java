@@ -6,6 +6,7 @@ import com.csd.blockneat.utils.ECDSASignature;
 import com.csd.blockneat.client.InternalUser;
 import com.csd.blockneat.miner.Miner;
 import com.csd.blockneat.workload.Fill;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.security.*;
@@ -38,33 +39,36 @@ public class Client {
 
     static String prompt;
 
-    private static void handleCommand(String[] command, BlockNeatAPI bna)  {
+    static ObjectMapper mapper = new ObjectMapper();
+
+    private static void handleCommand(String[] command, BlockNeatAPI bna) {
+
         try {
+            String output = null;
             switch (command[0]) {
-                case "exit" -> {}
-                case "cu" -> System.out.println(bna.createUser());
-                case "ca" -> System.out.println(bna.createAccount(command[1]));
-                case "lm" -> System.out.println(bna.loadMoney(command[1], Integer.parseInt(command[2])));
-                case "st" ->
-                        System.out.println(bna.sendTransaction(command[1], command[2], Integer.parseInt(command[3])));
-                case "gtv" -> {
-                    List<String> accounts = new LinkedList<>(Arrays.asList(command).subList(1, command.length));
-                    System.out.println(bna.getTotalValue(accounts));
+                case "exit" -> {
                 }
-                case "gb" -> System.out.println(bna.getBalance(command[1]));
-                case "gu" -> System.out.println(bna.getAllUsers());
-                case "ga" -> System.out.println(bna.getAllAccounts());
-                case "gt" -> System.out.println(bna.getAllTransactions());
-                case "ge" -> System.out.println(bna.getExtract(command[1]));
+                case "cu" -> output = bna.createUser();
+                case "ca" -> output = bna.createAccount(command[1]);
+                case "lm" -> output = bna.loadMoney(command[1], Integer.parseInt(command[2]));
+                case "st" -> output = bna.sendTransaction(command[1], command[2], Integer.parseInt(command[3]));
+                case "gtv" -> output = bna.getTotalValue(Arrays.asList(command).subList(1, command.length));
+                case "gb" -> output = bna.getBalance(command[1]);
+                case "gu" -> output = bna.getAllUsers();
+                case "ga" -> output = bna.getAllAccounts();
+                case "gt" -> output = bna.getAllTransactions();
+                case "ge" -> output = bna.getExtract(command[1]);
                 case "chu" -> changeUser("config/users.pkcs12", "users", command[1], command[2]);
-                case "ggv" -> System.out.println(bna.getGlobalValue());
-                case "gl" -> System.out.println(bna.getLedger());
+                case "ggv" -> output = bna.getGlobalValue();
+                case "gl" -> output = bna.getLedger();
                 case "help", "h" -> help();
                 case "mine" -> mine();
                 case "fill" -> Fill.fill(url, KEY_STORE_PATH, KEY_STORE_PASSWORD, "user", 5);
                 default -> System.out.println("Invalid command");
             }
-        } catch(Exception e) {
+            if (output != null)
+                System.out.println(mapper.readTree(output).toPrettyString());
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Invalid command arguments");
         }
@@ -76,20 +80,21 @@ public class Client {
 
     private static void help() {
         System.out.println("""
-                           
-                           ca <accountId> ---- create account
-                           cu ---- create current user in the system
-                           chu <userId> <password> ---- Change to another user
-                           lm <accountId> <value> ---- Load Money
-                           st <from_accountId> <to_accountId> <value> ---- Send Transaction
-                           gb <accountId> ---- get Balance
-                           ge <accountId> ---- get Extract
-                           ggv ---- get global Value
-                           gtv <accountId_1> <accountId_2> ... <accountId_N> ---- get total value
-                           gl ---- get ledger
-                           help
-                           exit""");
+                                           
+                ca <accountId> ---- create account
+                cu ---- create current user in the system
+                chu <userId> <password> ---- Change to another user
+                lm <accountId> <value> ---- Load Money
+                st <from_accountId> <to_accountId> <value> ---- Send Transaction
+                gb <accountId> ---- get Balance
+                ge <accountId> ---- get Extract
+                ggv ---- get global Value
+                gtv <accountId_1> <accountId_2> ... <accountId_N> ---- get total value
+                gl ---- get ledger
+                help
+                exit""");
     }
+
     public static void main(String[] args) {
 
         System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());

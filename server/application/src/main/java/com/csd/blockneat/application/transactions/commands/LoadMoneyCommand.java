@@ -9,14 +9,17 @@ import com.csd.blockneat.application.crypto.ECDSA;
 import com.csd.blockneat.application.entities.Account;
 import com.csd.blockneat.application.Either;
 import com.csd.blockneat.application.ExceptionCode;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-
+@JsonTypeName("loadMoney")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record LoadMoneyCommand(String accountId, int value,
-                               String signBase64) implements Command<Either<Voidy>>, WriteCommand, Serializable {
+                               String signBase64, long timestamp) implements Command<Either<Voidy>>, WriteCommand, Serializable {
 
     @Component
     @Qualifier(CommandTypes.APP_WRITE)
