@@ -6,6 +6,7 @@ import com.csd.blockneat.application.commands.WriteCommand;
 import com.csd.blockneat.application.entities.Signed;
 import com.csd.blockneat.application.ledger.LedgerRepository;
 import com.csd.blockneat.application.Either;
+import com.csd.blockneat.application.mining.commands.ProposeBlockCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ public class LedgerPersistable implements Command.Middleware {
     public <R, C extends Command<R>> R invoke(C command, Next<R> next) {
         R response = next.invoke();
         if (command instanceof WriteCommand writeCommand &&
-                isSuccessful(response)) {
+                isSuccessful(response) && !(writeCommand instanceof ProposeBlockCommand)) {
             ledger.append(writeCommand);
         }
         return response;
