@@ -18,32 +18,31 @@ public class Miner {
 
     private final BlockNeatAPI blockNeatAPI;
     private final InternalUser user;
-    private final ExecutorService executorService;
-
-    private Future<Object> current;
+    private Thread current;
 
     public Miner(BlockNeatAPI blockNeatAPI, InternalUser user) {
         this.blockNeatAPI = blockNeatAPI;
         this.user = user;
-        executorService = Executors.newSingleThreadExecutor();
     }
 
     public void start() {
         if (current != null) {
             return;
         }
-        current = executorService.submit(() -> {
+        current = new Thread(() -> {
             while (true) {
                 try {
                     Block nextBlock;
-                    byte[] block;
-                    while((block = blockNeatAPI.getNextBlock()) == null) {
-                        Thread.sleep(1000);
-                    }
-                    try (var byteIn = new ByteArrayInputStream(block);
-                         var objIn = new ObjectInputStream(byteIn)) {
-                        nextBlock = (Block) objIn.readObject();
-                    }
+                    do {
+                        try (var byteIn = new ByteArrayInputStream(blockNeatAPI.getNextBlock());
+                             var objIn = new ObjectInputStream(byteIn)) {
+                            nextBlock = (Block) objIn.readObject();
+                            if (nextBlock == null) {
+                                Thread.sleep(1000);
+                            }
+                        }
+                    } while (nextBlock == null);
+
                     ValidatedBlock validatedBlock = validateBlock(nextBlock);
                     byte[] minedBlock;
                     try (var byteOut = new ByteArrayOutputStream();
@@ -56,10 +55,11 @@ public class Miner {
                     if(blockNeatAPI.proposeBlock(minedBlock))
                         System.out.println("Block Mined.");
                 } catch (IOException | InterruptedException | ClassNotFoundException e) {
-//                    throw new RuntimeException(e);
+                    throw new RuntimeException(e);
                 }
             }
         });
+        current.start();
     }
 
     public boolean mineBlock() {
@@ -114,7 +114,7 @@ public class Miner {
 
     public void stop() {
         if (current != null) {
-            current.cancel(true);
+            current.interrupt();
             current = null;
         }
     }
