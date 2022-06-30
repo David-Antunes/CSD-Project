@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@Qualifier(PipelinrConfig.BFT_SMART_APP_WRITE)
+@Qualifier(PipelinrConfig.BftSmart.APP_WRITE)
 @ConditionalOnProperty(name = "bftsmart.enabled")
 public class BftSmartWriteCommandHandler<C extends Command<R>, R> extends BftSmartGenericCommandHandler<C, R> {
 
