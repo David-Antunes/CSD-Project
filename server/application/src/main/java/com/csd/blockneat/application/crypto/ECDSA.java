@@ -20,7 +20,7 @@ public class ECDSA {
     private final boolean blockmess;
     private PrivateKey privateKey;
     private final int replicaId;
-    public ECDSA(@Value("${blockmess.enabled}") String blockmess) {
+    public ECDSA(@Value("${blockmess.enabled:false}") String blockmess) {
         this.blockmess = Boolean.parseBoolean(blockmess);
         String replica_id = System.getenv("REPLICA_ID");
         replicaId = replica_id != null ? Integer.parseInt(replica_id) : 0;
