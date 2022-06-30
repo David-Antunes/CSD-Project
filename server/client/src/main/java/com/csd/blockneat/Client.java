@@ -91,6 +91,11 @@ public class Client {
                 ggv ---- get global Value
                 gtv <accountId_1> <accountId_2> ... <accountId_N> ---- get total value
                 gl ---- get ledger
+                gu --- get all users
+                ga --- get all accounts
+                gt --- get all transactions
+                mine --- toggle mining blocks
+                fill --- fill the system with users,accounts and transactions
                 help
                 exit""");
     }

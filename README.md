@@ -18,12 +18,20 @@ To build the whole project including client and application run:
 ./build.sh
 ```
 
-### Application
+### BFT_SMART
 
-To build the docker image for the application run:
+To Build the system running BFT-SMART run:
 
 ```bash
-docker build . -t bft
+docker-compose -f server/rest/docker-compose.yaml up
+```
+
+### PROXY
+
+To use proxy for SGX run:
+
+```bash
+docker-compose -f server/sgx-proxy/docker-compose.yaml up
 ```
 
 ### Client
@@ -31,14 +39,25 @@ docker build . -t bft
 To build the client run:
 
 ```bash
-docker build client/ bft-client
+docker build -t bft-client -f server/client/Dockerfile .
 ```
 
-## Run
+### Run the client
 
-To run the project it is required two terminals.
+To run the client you have two possible choices:
 
-In one terminal run:
+#### Without Proxy
+
+```bash
+docker run -it --network rest_bft bft-client
+```
+
+#### With Proxy
+
+```bash
+docker run -it --network sgx-proxy_bft -e PROXY=https://172.20.0.6:8443 bft-client
+```
+This way the sendTransaction request will go to the proxy instead of a replica
 
 ```bash
 docker-compose up
@@ -54,65 +73,47 @@ docker run -it --network csdproject_bft bft-client
 
 ## Client
 
-The client contains two states. The initial state is to decide if you want to login to a internalUser, fill the application with some data or do a benchmark.
-
-The benchmark command will generate the users, accounts and generate 10000 transactions on 4 threads
-
-```
-lu <userId> <password> ---- Start internalUser session
-fill ---- Fills the ledger with data
-benchmark ---- Starts a pull of threads and generates transactions.
-help
-exit
-```
-
-On the second state you have access to 4 users:
-
-internalUser: user1 password: user1
-
-internalUser: user2 password: user2
-
-internalUser: user3 password: user3
-
-internalUser: user4 password: user4
-
-to login a internalUser you have to run:
-
-```
-lu user1 user1
-```
-
-then the prompt will change to:
-
-```
-user1>
-```
-
-In this state the program is loaded with the key pair of the user1 and every write call function will be signed.
-
-In this state you will have access to the following commands:
-
-```
+```                   
 ca <accountId> ---- create account
-cu ---- create current internalUser in the system
-chu <userId> <password> ---- Change to another internalUser
-lu ---- list all users
+cu ---- create current user in the system
+chu <userId> <password> ---- Change to another user
 lm <accountId> <value> ---- Load Money
 st <from_accountId> <to_accountId> <value> ---- Send Transaction
 gb <accountId> ---- get Balance
 ge <accountId> ---- get Extract
 ggv ---- get global Value
-gtv <account1> <account2> ... <accountN> ---- get total value
+gtv <accountId_1> <accountId_2> ... <accountId_N> ---- get total value
 gl ---- get ledger
+gu --- get all users
+ga --- get all accounts
+gt --- get all transactions
+mine --- toggle mining blocks
+fill --- fill the system with users,accounts and transactions
 help
 exit
-user1>
 ```
 
-cu — registers the current logged in internalUser in the system
 
-ca — creates a new account on user1
+### Benchmark
 
-chu — changes to a new internalUser
+To Run the benchmark:
 
-st — sends a transaction from the accountId to another accountId registered in the system with the given value
+#### Docker
+
+```bash
+docker run -it --network rest_bft -e BENCHMARK_PATH=config/workloads/workload.properties benchmark
+```
+
+or locally:
+
+```bash
+java -Djavax.net.ssl.trustStore=config/users.pkcs12 -Djavax.net.ssl.trustStorePassword=users -Dhttps.protocols=TLSv1.3 -Djavax.net.ssl.keyStoreType=pkcs12 -jar server/benchmark/build/libs/benchmark-0.0.1-SNAPSHOT.jar com.csd.blockneat.Main config/workloads/workload.properties
+```
+
+There are two possible workloads, mining and api.
+Workload API will test the REST API of the system without mining any blocks.
+Workload MINING will test the Blockchain performance by writing and mining at the same time.
+
+It will be generated a folder called results that will contain the data of the tests. Keep in mind that if you are running inside of docker it is needed to copy the files from the inside of the docker.
+
+Successive runs will remove the already written files.

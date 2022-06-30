@@ -20,12 +20,13 @@ public class Main {
 
         String benchmarkConfigurationFile = null;
         System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
-        if (args.length > 1) {
+
+        if (args.length > 2) {
             System.out.println("Too many Arguments");
             System.exit(1);
         }
-        if (args.length == 1) {
-            benchmarkConfigurationFile = args[0];
+        if (args.length == 2) {
+            benchmarkConfigurationFile = args[1];
         }
         if (System.getenv("BENCHMARK_PATH") != null)
             benchmarkConfigurationFile = System.getenv("BENCHMARK_PATH");
@@ -75,7 +76,7 @@ public class Main {
             System.exit(0);
         }
 
-
+        System.out.println("Starting benchmark...");
         if (operation.equals("api")) {
             OperationBenchmark bm = new OperationBenchmark(clients, threads, readPercentage, seconds);
             bm.benchmark();
@@ -89,7 +90,7 @@ public class Main {
             processMiningStatistics(bm);
             bm.writeResultsToFile(extension);
         }
-
+        System.out.println("Benchmark done.");
         System.exit(0);
     }
 
