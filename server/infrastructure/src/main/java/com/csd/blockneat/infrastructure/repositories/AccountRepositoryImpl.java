@@ -91,7 +91,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public int getUnconfirmedBalance(String accountId) {
-        return getBalanceWith(accountId, getUnconfirmedTransactionStream());
+        return getBalanceWith(accountId, Stream.concat(getConfirmedTransactionStream(), getUnconfirmedTransactionStream()));
     }
 
     public int getConfirmedBalance(String accountId) {
