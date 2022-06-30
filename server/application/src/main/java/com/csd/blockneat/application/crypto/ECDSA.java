@@ -1,6 +1,7 @@
 package com.csd.blockneat.application.crypto;
 
 import com.csd.blockneat.application.entities.Signed;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -16,9 +17,11 @@ import java.util.TreeMap;
 @Component
 public class ECDSA {
 
+    private final boolean blockmess;
     private PrivateKey privateKey;
     private final int replicaId;
-    public ECDSA() {
+    public ECDSA(@Value("${blockmess.enabled}") String blockmess) {
+        this.blockmess = Boolean.parseBoolean(blockmess);
         String replica_id = System.getenv("REPLICA_ID");
         replicaId = replica_id != null ? Integer.parseInt(replica_id) : 0;
 
@@ -56,7 +59,6 @@ public class ECDSA {
 
     public String sign(String message) {
         try {
-
             Signature signature = Signature.getInstance("SHA512withECDSA", "BC");
             signature.initSign(privateKey, new SecureRandom());
             signature.update(message.getBytes(StandardCharsets.UTF_8));
@@ -72,6 +74,6 @@ public class ECDSA {
         String signature = sign(object.toString());
         Map<Integer, String> signatures = new TreeMap<>();
         signatures.put(replicaId, signature);
-        return new Signed<>(object, signatures);
+        return new Signed<>(object, blockmess ? null : signatures);
     }
 }
