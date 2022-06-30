@@ -98,12 +98,12 @@ public class Main {
         System.out.println("========================================");
         System.out.println();
         System.out.println("Writes:");
-        for(Long value: bm.getWrites())
+        for(Long value: bm.getWrites().values())
             System.out.println(value);
 
         System.out.println();
         System.out.println("Reads:");
-        for(Long value: bm.getReads())
+        for(Long value: bm.getReads().values())
             System.out.println(value);
 
         System.out.println();

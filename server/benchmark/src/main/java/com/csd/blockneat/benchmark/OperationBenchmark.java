@@ -8,8 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
@@ -18,28 +17,28 @@ public class OperationBenchmark extends GenericBenchmark implements Benchmark {
     private final float readPercentage;
     private float avgWrites;
     private float avgReads;
-    private List<Long> writes;
-    private List<Long> reads;
+    private final SortedMap<Long, Long> writes;
+    private final SortedMap<Long, Long> reads;
     private float operationThroughput;
-    private int seconds;
+    private final int seconds;
 
 
     public OperationBenchmark(List<BlockNeatAPI> clients, int threads, float readPercentage, int seconds) {
         super(clients, threads, seconds);
         this.readPercentage = readPercentage;
-        this.writes = new LinkedList<>();
-        this.reads = new LinkedList<>();
+        this.writes = new TreeMap<>();
+        this.reads = new TreeMap<>();
         avgReads = 0.0f;
         avgWrites = 0.0f;
         operationThroughput = 0.0f;
         this.seconds = seconds;
     }
 
-    public List<Long> getWrites() {
+    public SortedMap<Long, Long> getWrites() {
         return writes;
     }
 
-    public List<Long> getReads() {
+    public SortedMap<Long, Long> getReads() {
         return reads;
     }
 
@@ -85,16 +84,16 @@ public class OperationBenchmark extends GenericBenchmark implements Benchmark {
 
         for (Tester tester : testers) {
             OperationTester op = (OperationTester) tester;
-            writes.addAll(op.getWriteLatency());
-            reads.addAll(op.getReadLatency());
+            writes.putAll(op.getWriteLatency());
+            reads.putAll(op.getReadLatency());
         }
         long writeLatency = 0;
-        for (Long value : writes) {
+        for (Long value : writes.values()) {
             writeLatency += value;
         }
 
         long readLatency = 0;
-        for (Long value : reads) {
+        for (Long value : reads.values()) {
             readLatency += value;
         }
 
@@ -134,14 +133,14 @@ public class OperationBenchmark extends GenericBenchmark implements Benchmark {
         }
 
         try(FileWriter myWriter = new FileWriter("results/reads-" + extension + ".txt")) {
-            for(long value: reads)
+            for(long value: reads.values())
                 myWriter.write(value + "\n");
             myWriter.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         try(FileWriter myWriter = new FileWriter("results/writes-" + extension + ".txt")) {
-            for(long value: writes)
+            for(long value: writes.values())
                 myWriter.write(value + "\n");
             myWriter.flush();
         } catch (IOException e) {

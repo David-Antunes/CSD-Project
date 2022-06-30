@@ -8,6 +8,8 @@ import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,8 +18,8 @@ public class OperationTester extends Tester implements Callable<Object> {
     private final BlockNeatAPI client;
     private final int userNumber;
 
-    private final List<Long> writeLatency;
-    private final List<Long> readLatency;
+    private final SortedMap<Long, Long> writeLatency;
+    private final SortedMap<Long, Long> readLatency;
 
     private final float readPercentage;
 
@@ -28,17 +30,17 @@ public class OperationTester extends Tester implements Callable<Object> {
         this.client = client;
         this.userNumber = userNumber;
         this.readPercentage = readPercentage;
-        this.writeLatency = new LinkedList<>();
-        this.readLatency = new LinkedList<>();
+        this.writeLatency = new TreeMap<>();
+        this.readLatency = new TreeMap<>();
         this.executionTime = executionTime;
         this.id = client.getInternalUser().getUsername().split("user")[1];
     }
 
-    public List<Long> getReadLatency() {
+    public SortedMap<Long, Long> getReadLatency() {
         return readLatency;
     }
 
-    public List<Long> getWriteLatency() {
+    public SortedMap<Long, Long> getWriteLatency() {
         return writeLatency;
     }
 
@@ -53,11 +55,11 @@ public class OperationTester extends Tester implements Callable<Object> {
             if (nextOperation < readPercentage) {
                 response = readOperation();
                 if(response != -1)
-                    readLatency.add(readOperation());
+                    readLatency.put(System.currentTimeMillis(), readOperation());
             } else {
                 response = writeOperation();
                 if(response != -1)
-                    writeLatency.add(writeOperation());
+                    writeLatency.put(System.currentTimeMillis(), writeOperation());
             }
             if (startTime + executionTime < System.currentTimeMillis())
                 break;
