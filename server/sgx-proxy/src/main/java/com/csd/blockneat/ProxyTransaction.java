@@ -24,7 +24,7 @@ public class ProxyTransaction {
     BlockneatSignatures replicaSignatures;
     @Autowired
     public ProxyTransaction() throws URISyntaxException {
-        url = "https://172.20.0.2:8443/transactions";
+        url = System.getenv("BFT_URL") + "/transactions";
         uri = new URI(url);
         om = new ObjectMapper();
         System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
