@@ -63,6 +63,11 @@ public class OperationTester extends Tester implements Callable<Object> {
             }
             if (startTime + executionTime < System.currentTimeMillis())
                 break;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 //        System.out.println("Thread " + id + " has ended");
         return null;

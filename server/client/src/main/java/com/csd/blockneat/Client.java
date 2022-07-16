@@ -64,6 +64,7 @@ public class Client {
                 case "help", "h" -> help();
                 case "mine" -> mine();
                 case "fill" -> Fill.fill(url, KEY_STORE_PATH, KEY_STORE_PASSWORD, "user", 5);
+                case "stats" -> output = bna.getCurrentStatistics();
                 default -> System.out.println("Invalid command");
             }
             if (output != null)

@@ -175,7 +175,7 @@ public class Main {
         System.out.println("Transaction Operations: " + mb.getTransactionLatency().size());
         System.out.println("Avg Transaction Latency (ms): " + mb.getAvgTransactionLatency());
         System.out.println("Operation Throughput (Tx/s): " + mb.getOperationThroughput());
-        System.out.println("Execution time: " + mb.getSeconds() + " s");
+        System.out.println("Execution time: " + mb.getExecutionTime() + " s");
         System.out.println();
         System.out.println("===========================================");
     }

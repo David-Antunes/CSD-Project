@@ -250,4 +250,14 @@ public class BlockNeatAPIClient implements BlockNeatAPI {
 
         return om.readValue(response.body(), BlockneatStatistic.class);
     }
+    public String getCurrentStatistics() throws IOException, InterruptedException {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint + "/ledger/statistics"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        return response.body();
+    }
 }

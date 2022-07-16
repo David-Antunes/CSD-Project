@@ -40,4 +40,5 @@ public interface BlockNeatAPI {
     boolean proposeBlock(byte[] block) throws IOException, InterruptedException;
 
     BlockneatStatistic getBlockneatStatistic() throws IOException, InterruptedException;
+    String getCurrentStatistics() throws IOException, InterruptedException;
 }

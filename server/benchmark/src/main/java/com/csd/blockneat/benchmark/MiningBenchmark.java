@@ -46,6 +46,10 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
         return seconds;
     }
 
+    public float getExecutionTime() {
+        return (float) this.executionTime/1000;
+    }
+
     public float getOperationThroughput() {
         return operationThroughput;
     }
@@ -110,7 +114,12 @@ public class MiningBenchmark extends GenericBenchmark implements Benchmark {
         transactionLatency = response.transactionLatency();
         avgMinedBlock = response.avgMinedBlock();
         avgTransactionLatency = response.avgTransactionLatency();
-        operationThroughput = response.transactions() != 0 ? (float) response.transactions() / seconds : 0.0f;
+
+        int value = 0;
+        for(Long latency: mineBlockLatency)
+            value += latency;
+        operationThroughput = response.transactions() != 0 ? (float) response.transactions() / ((float) value/1000) : 0.0f;
+        this.executionTime = value;
     }
 
     public void writeResultsToFile(String extension) {
