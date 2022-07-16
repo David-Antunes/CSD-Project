@@ -22,7 +22,7 @@ public class Client {
     static ECDSASignature ec;
 
     static Miner miner;
-    static String url = "https://172.20.0.2:8443";
+    static String url = "https://54.36.163.65:8443";
 
     private static void changeUser(String filename, String password, String username, String userPassword) {
         try {
