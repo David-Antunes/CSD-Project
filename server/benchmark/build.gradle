@@ -13,6 +13,7 @@ repositories {
     maven {
         url "https://maven.scijava.org/content/repositories/public/"
     }
+    maven { url "https://repository.aspose.com/repo/" }
 }
 
 dependencies {
@@ -22,6 +23,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.aspose:aspose-cells:20.6'
     implementation project(":server:client")
     implementation project(":server:application")
     implementation project(":server:rest")

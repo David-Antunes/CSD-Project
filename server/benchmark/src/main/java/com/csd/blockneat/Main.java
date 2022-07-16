@@ -1,6 +1,10 @@
 package com.csd.blockneat;
 
+import com.aspose.cells.Workbook;
+import com.aspose.cells.Worksheet;
+import com.csd.blockneat.Testers.OperationTester;
 import com.csd.blockneat.benchmark.Benchmark;
+import com.csd.blockneat.benchmark.FullBenchmark;
 import com.csd.blockneat.benchmark.MiningBenchmark;
 import com.csd.blockneat.benchmark.OperationBenchmark;
 import com.csd.blockneat.client.BlockNeatAPI;
@@ -11,12 +15,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, SignatureException, InvalidKeyException, InterruptedException {
+    public static void main(String[] args) throws Exception {
 
         String benchmarkConfigurationFile = null;
         System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
@@ -52,12 +58,19 @@ public class Main {
         String userKeyStorePassword = "";
         int seconds = 0;
 
-        if (operation.equals("api")) {
-            readPercentage = Float.parseFloat(config.getProperty("readPercentage"));
-
-        } else if (operation.equals("mining")) {
-            miners = Integer.parseInt(config.getProperty("minerNumber"));
+        switch (operation) {
+            case "api" -> readPercentage = Float.parseFloat(config.getProperty("readPercentage"));
+            case "mining" -> miners = Integer.parseInt(config.getProperty("minerNumber"));
+            case "full" -> {
+                    miners = Integer.parseInt(config.getProperty("minerNumber"));
+                readPercentage = Float.parseFloat(config.getProperty("readPercentage"));
+            }
+            default -> {
+                System.out.println("Invalid operation.");
+                System.exit(1);
+            }
         }
+
         userNumber = Integer.parseInt(config.getProperty("userNumber"));
         userKeyStoreFile = config.getProperty("userKeyStoreFile");
         userKeyStorePassword = config.getProperty("userKeyStorePassword");
@@ -82,13 +95,22 @@ public class Main {
             bm.benchmark();
             bm.processStatistics();
             processOperationStatistics(bm);
-            bm.writeResultsToFile(extension);
+            bm.writeResultsToFile(extension + "-" + UUID.randomUUID());
         } else if (operation.equals("mining")) {
             MiningBenchmark bm = new MiningBenchmark(clients, threads, miners, seconds);
             bm.benchmark();
             bm.processStatistics();
             processMiningStatistics(bm);
-            bm.writeResultsToFile(extension);
+            bm.writeResultsToFile(extension + "-" + UUID.randomUUID());
+        } else {
+            FullBenchmark fb = new FullBenchmark(clients,threads,readPercentage, seconds, miners);
+            fb.benchmark();
+            fb.processStatistics();
+            processFullStatistics(fb);
+            String fileID = extension + "-" + UUID.randomUUID();
+//            fb.writeResultsToFile(fileID);
+            generateExcel(fb, fileID);
+
         }
         System.out.println("Benchmark done.");
         System.exit(0);
@@ -98,12 +120,12 @@ public class Main {
         System.out.println("========================================");
         System.out.println();
         System.out.println("Writes:");
-        for(Long value: bm.getWrites().values())
+        for (Long value : bm.getWrites().values())
             System.out.println(value);
 
         System.out.println();
         System.out.println("Reads:");
-        for(Long value: bm.getReads().values())
+        for (Long value : bm.getReads().values())
             System.out.println(value);
 
         System.out.println();
@@ -120,7 +142,7 @@ public class Main {
         System.out.println("========================================");
         System.out.println();
         System.out.println("PoW:");
-        for(Long value: bm.getMineBlockLatency())
+        for (Long value : bm.getMineBlockLatency())
             System.out.println(value);
 
         System.out.println();
@@ -131,5 +153,67 @@ public class Main {
         System.out.println("Avg Transaction Latency (ms): " + bm.getAvgTransactionLatency());
         System.out.println("Operation Throughput (Tx/s): " + bm.getOperationThroughput());
         System.out.println("Execution time: " + bm.getSeconds() + " s");
+    }
+
+    private static void processFullStatistics(FullBenchmark fb) {
+        OperationBenchmark bm = (OperationBenchmark) fb.getOperationBenchmark();
+        MiningBenchmark mb = (MiningBenchmark) fb.getMiningBenchmark();
+        System.out.println("================OPERATION==================");
+        System.out.println();
+        System.out.println("Write Operations: " + bm.getWrites().size());
+        System.out.println("Avg Write Latency (ms): " + bm.getAvgWrites());
+        System.out.println("Read Operations: " + bm.getReads().size());
+        System.out.println("Avg Read Latency (ms): " + bm.getAvgReads());
+        System.out.println("Operation Throughput (Tx/s): " + bm.getOperationThroughput());
+        System.out.println("Execution time: " + bm.getSeconds() + " s");
+        System.out.println();
+        System.out.println("===========================================");
+        System.out.println("==================MINING===================");
+        System.out.println();
+        System.out.println("Blocks mined: " + mb.getBlocksMined());
+        System.out.println("Avg PoW (ms): " + mb.getAvgMinedBlock());
+        System.out.println("Transaction Operations: " + mb.getTransactionLatency().size());
+        System.out.println("Avg Transaction Latency (ms): " + mb.getAvgTransactionLatency());
+        System.out.println("Operation Throughput (Tx/s): " + mb.getOperationThroughput());
+        System.out.println("Execution time: " + mb.getSeconds() + " s");
+        System.out.println();
+        System.out.println("===========================================");
+    }
+
+    private static void generateExcel(FullBenchmark fb, String extension) throws Exception {
+        OperationBenchmark bm = (OperationBenchmark) fb.getOperationBenchmark();
+        MiningBenchmark mb = (MiningBenchmark) fb.getMiningBenchmark();
+        Workbook workbook = new Workbook();
+        Worksheet worksheet = workbook.getWorksheets().get(0);
+
+        String[][] data = {
+                {"Write Operations", String.valueOf(bm.getWrites().size())},
+                {"Avg Write Latency (ms)", String.valueOf(bm.getAvgWrites())},
+                {"Read Operations" , String.valueOf(bm.getReads().size())},
+                {"Avg Transaction Latency (ms)", String.valueOf(bm.getAvgReads())},
+                {"Operation Throughput (Tx/s)", String.valueOf(bm.getOperationThroughput())},
+                {"Execution time (s)", String.valueOf(bm.getSeconds())},
+                {"Blocks mined", String.valueOf(mb.getBlocksMined())},
+                {"Avg PoW (ms)", String.valueOf(mb.getAvgMinedBlock())},
+                {"Transaction Operations", String.valueOf(mb.getTransactionLatency().size())},
+                {"Avg Transaction Latency (ms)", String.valueOf(mb.getAvgTransactionLatency())},
+                {"Operation Throughput (Tx/s)", String.valueOf(mb.getOperationThroughput())}
+        };
+        worksheet.getCells().importArray(data, 0, 0);
+        int size = Math.max(bm.getWrites().size(), bm.getReads().size());
+        String[][] RWs = new String[size][2];
+
+        RWs[0] = new String[]{"Reads", "Writes"};
+        Iterator<Long> reads = bm.getReads().values().iterator();
+        Iterator<Long> writes = bm.getWrites().values().iterator();
+        for(int i = 1; i < size; i++) {
+            RWs[i] = new String[] {
+                    reads.hasNext() ? String.valueOf(reads.next()) : "",
+                    writes.hasNext() ? String.valueOf(writes.next()) : ""
+            };
+        }
+
+        worksheet.getCells().importArray(RWs, 0, 3);
+        workbook.save("results/workload-" + extension + ".xlsx");
     }
 }
