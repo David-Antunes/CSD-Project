@@ -24,6 +24,11 @@ public class MiningTester extends Tester implements Callable<Object> {
             miner.mineBlock();
             if (startTime + executionTime < System.currentTimeMillis())
                 break;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
         System.out.println("Ended Miner.");
         return null;

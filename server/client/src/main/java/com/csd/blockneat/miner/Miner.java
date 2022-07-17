@@ -10,9 +10,6 @@ import com.csd.blockneat.client.InternalUser;
 import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class Miner {
 
@@ -30,34 +27,7 @@ public class Miner {
             return;
         }
         current = new Thread(() -> {
-            while (true) {
-                try {
-                    Block nextBlock;
-                    do {
-                        try (var byteIn = new ByteArrayInputStream(blockNeatAPI.getNextBlock());
-                             var objIn = new ObjectInputStream(byteIn)) {
-                            nextBlock = (Block) objIn.readObject();
-                            if (nextBlock == null) {
-                                Thread.sleep(1000);
-                            }
-                        }
-                    } while (nextBlock == null);
-
-                    ValidatedBlock validatedBlock = validateBlock(nextBlock);
-                    byte[] minedBlock;
-                    try (var byteOut = new ByteArrayOutputStream();
-                         var objOut = new ObjectOutputStream(byteOut)) {
-                        objOut.writeObject(validatedBlock);
-                        objOut.flush();
-                        byteOut.flush();
-                        minedBlock = byteOut.toByteArray();
-                    }
-                    if(blockNeatAPI.proposeBlock(minedBlock))
-                        System.out.println("Block Mined.");
-                } catch (IOException | InterruptedException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            while (mineBlock());
         });
         current.start();
     }
@@ -65,10 +35,16 @@ public class Miner {
     public boolean mineBlock() {
         try {
             Block nextBlock;
-            try (var byteIn = new ByteArrayInputStream(blockNeatAPI.getNextBlock());
-                 var objIn = new ObjectInputStream(byteIn)) {
-                nextBlock = (Block) objIn.readObject();
-            }
+            do {
+                try (var byteIn = new ByteArrayInputStream(blockNeatAPI.getNextBlock());
+                     var objIn = new ObjectInputStream(byteIn)) {
+                    nextBlock = (Block) objIn.readObject();
+                    if (nextBlock == null) {
+                        Thread.sleep(1000);
+                    }
+                }
+            } while (nextBlock == null);
+
             ValidatedBlock validatedBlock = validateBlock(nextBlock);
             byte[] minedBlock;
             try (var byteOut = new ByteArrayOutputStream();
@@ -78,10 +54,10 @@ public class Miner {
                 byteOut.flush();
                 minedBlock = byteOut.toByteArray();
             }
-            blockNeatAPI.proposeBlock(minedBlock);
+            if(blockNeatAPI.proposeBlock(minedBlock))
+                System.out.println("Block Mined.");
             return true;
         } catch (IOException | InterruptedException | ClassNotFoundException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -100,7 +76,11 @@ public class Miner {
             );
             hash = SHA512.hexHash(nextBlock.toString());
         } while (!hash.startsWith("000"));
-
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return new ValidatedBlock(nextBlock, hash, System.currentTimeMillis());
     }
 
