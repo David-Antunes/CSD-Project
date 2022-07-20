@@ -22,6 +22,7 @@ public class ProxyTransaction {
     URI uri;
     ObjectMapper om;
     BlockneatSignatures replicaSignatures;
+    HttpClient httpClient;
     @Autowired
     public ProxyTransaction() throws URISyntaxException {
         url = System.getenv("BFT_URL") + "/transactions";
@@ -29,6 +30,7 @@ public class ProxyTransaction {
         om = new ObjectMapper();
         System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
         replicaSignatures = new BlockneatSignatures(4);
+        this.httpClient = HttpClient.newHttpClient();
     }
 
     @PostMapping()
@@ -45,7 +47,7 @@ public class ProxyTransaction {
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
 
-       var response =  HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+       var response =  httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         Response signatures = om.readValue(response.body(), Response.class);
 
         if(!replicaSignatures.verifySignatures(signatures))
