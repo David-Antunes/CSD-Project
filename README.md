@@ -117,3 +117,9 @@ Workload MINING will test the Blockchain performance by writing and mining at th
 It will be generated a folder called results that will contain the data of the tests. Keep in mind that if you are running inside of docker it is needed to copy the files from the inside of the docker.
 
 Successive runs will remove the already written files.
+
+### SGX
+
+```bash
+docker run $MOUNT_SGXDEVICE -it -p 5005:5005 -p 17000:8443 -e BFT_URL=https://54.36.163.65:8443 -e SPRING_PROFILES_ACTIVE=tls -e REPLICA_ID=4 -e KEYSTORE_PASSWORD=password -e SCONE_VERSION=1 -e SCONE_HEAP=4000M -e SCONE_LOG=7 -e SCONE_FORK=1 -e SCONE_MPROTECT=1 -e SCONE_ALLOW_DLOPEN=2 -e SCONE_ALPINE=1 -e SCONE_STACK=4M --mount type=tmpfs,destination=/tmp sgx
+```
