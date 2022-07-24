@@ -22,7 +22,7 @@ public class Client {
     static ECDSASignature ec;
 
     static Miner miner;
-    static String url = "https://172.20.0.2:8443";
+    static String url = System.getenv("URL");
 
     private static void changeUser(String filename, String password, String username, String userPassword) {
         try {
@@ -97,6 +97,7 @@ public class Client {
                 gt --- get all transactions
                 mine --- toggle mining blocks
                 fill --- fill the system with users,accounts and transactions
+                stats --- prints the blockchain stats
                 help
                 exit""");
     }

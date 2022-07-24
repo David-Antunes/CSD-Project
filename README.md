@@ -89,6 +89,7 @@ ga --- get all accounts
 gt --- get all transactions
 mine --- toggle mining blocks
 fill --- fill the system with users,accounts and transactions
+stats --- prints the blockchain stats
 help
 exit
 ```
@@ -123,3 +124,23 @@ Successive runs will remove the already written files.
 ```bash
 docker run $MOUNT_SGXDEVICE -it -p 5005:5005 -p 17000:8443 -e BFT_URL=https://54.36.163.65:8443 -e SPRING_PROFILES_ACTIVE=tls -e REPLICA_ID=4 -e KEYSTORE_PASSWORD=password -e SCONE_VERSION=1 -e SCONE_HEAP=4000M -e SCONE_LOG=7 -e SCONE_FORK=1 -e SCONE_MPROTECT=1 -e SCONE_ALLOW_DLOPEN=2 -e SCONE_ALPINE=1 -e SCONE_STACK=4M --mount type=tmpfs,destination=/tmp sgx
 ```
+
+### Variables
+```env
+SPRING_PROFILES_ACTIVE=tls,bft-smart,mongo
+REPLICA_ID=0
+KEYSTORE_PASSWORD=password
+url=https://54.36.163.65:8443
+PROXY=https://141.95.173.56:17000
+BENCHMARK_PATH=config/workloads/workload-full.properties
+BFT_URL=https://54.36.163.65:8443
+PROCESS_BLOCKNEAT=1
+```
+* SPRING_PROFILES_ACTIVE = changes the program behaviour
+* REPLICA_ID = Starts the program with the given ID
+* KEYSTORE_PASSWORD = password for the replicas certificate
+* URL = Points the Client to a server
+* Proxy = Points the Client to a proxy
+* BENCHMARK_PATH = Passes a path to the benchmark to run the workload
+* BFT_URL = Points the Proxy server to a BFT server
+* PROCESS_BLOCKNEAT = When set to one, benchmark will only print the blockchain statistics
