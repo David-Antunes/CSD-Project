@@ -144,3 +144,10 @@ PROCESS_BLOCKNEAT=1
 * BENCHMARK_PATH = Passes a path to the benchmark to run the workload
 * BFT_URL = Points the Proxy server to a BFT server
 * PROCESS_BLOCKNEAT = When set to one, benchmark will only print the blockchain statistics
+
+
+### EXCEL
+
+Access to benchmarks
+
+https://docs.google.com/spreadsheets/d/1pRspGTmLx8MUClP1HCH8LmGJuBOyhlKnvkQuzG0bXgE/edit?usp=sharing
