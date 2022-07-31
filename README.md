@@ -10,14 +10,6 @@ Author: David Antunes 55045
 
 To have a full functioning prototype it is required to build the docker image for the application using bft-smart
 
-### Full build
-
-To build the whole project including client and application run:
-
-```bash
-./build.sh
-```
-
 ### BFT_SMART
 
 To Build the system running BFT-SMART run:
